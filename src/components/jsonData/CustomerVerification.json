@@ -1,0 +1,27 @@
+[
+    {
+        "title": "Aadhaar Verification",
+        "content": "It is an excellent API for paperless KYC purposes in which all the details captured and being verified with details obtained from the UIDAI server. It is based on the specially designed algorithm, capturing real-time detail from the customer's aadhar card.",
+        "image": "customer_verification/aadhar_thumbnail.png"
+    },
+    {
+        "title": "Pan Verification",
+        "content": "The best feature of this API is instantaneous verification response time as it captures all the details such as PAN number or image within seconds and matches with the details obtained from National Depository Securities Ltd. (NSDL)",
+        "image": "customer_verification/pan_thumbnail.png"
+    },
+    {
+        "title": "Driving License Verification",
+        "content": "If there is a need for driving license verification, it is the best for yse by government or insurace companies, which provides an accurate result than physical verification. It captured all the details immediately and matched with factual data obtained from the Ministry of Road Transport & Highways server.",
+        "image": "customer_verification/driving_license.png"
+    },
+    {
+        "title": "Voter Id Verification",
+        "content": "The primary input for verifying voter id is the EPIC number, which works as the input. After collection all the details, real-time verification occurs by checking finding equivalence between authenticated data from the Election Commission of India and user-filled data.",
+        "image": "customer_verification/voter_id.png"
+    },
+    {
+        "title": "Passport Verification",
+        "content": "Its process is based on the unique algorithm designed as an MRZ algorithm. According to the process, the system generated the MRZ code based on the input and matchded it with the client's data. All the details will be verified based on details from the Passport Seva Kendra portal.",
+        "image": "customer_verification/passport.png"
+    }
+]
