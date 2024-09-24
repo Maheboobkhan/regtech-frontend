@@ -1,128 +1,130 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
-import Cookies from 'js-cookie'; // Import js-cookie for handling cookies
+import Cookies from 'js-cookie';
+import { Link } from 'react-router-dom';
 
-class PanCardUpload extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            file: null, // To store the selected file
-            panCardInfo: null, // To store PAN card information
-            error: null,     // To store error message
-        };
+const PanCardUpload = () => {
+  const [file, setFile] = useState(null);
+  const [response, setResponse] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const token = Cookies.get('authToken');
+
+    if (!token) {
+      setError('Auth token is missing');
+      return;
     }
 
-    handleFileChange = (event) => {
-        this.setState({ file: event.target.files[0] });
-    };
+    if (!file) {
+      setError('Please select a file to upload');
+      return;
+    }
 
-    handleVerifyClick = async () => {
-        const { file } = this.state;
-        const accessToken = Cookies.get('authToken'); // Fetch access token from cookies
-        let response;
+    setLoading(true);
+    setError(null);
 
-        if (!file) {
-            this.setState({ error: 'Please select a file' });
-            return;
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const { data } = await axios.post(
+        'http://regtechapi.in/api/panupload',
+        formData,
+        {
+          headers: {
+            'AccessToken': token,
+            'Content-Type': 'multipart/form-data',
+          },
         }
+      );
+      console.log(data)
+      setResponse(data);
+    } catch (err) {
+      setError(err.response ? err.response.data.message : 'Error uploading file');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        // Prepare form data
-        const formData = new FormData();
-        formData.append('file', file);
-
-        try {
-            response = await axios.post(
-                'http://regtechapi.in/api/panupload',
-                formData,
-                {
-                    headers: {
-                        'AccessToken': accessToken,
-                        'Content-Type': 'multipart/form-data',
-                    },
-                }
-            );
-
-            console.log('API Response:', response.data);
-
-            // Assuming the API returns data with keys 'date_of_birth', 'name', and 'pan_number'
-            if (response.data) {
-                this.setState({
-                    panCardInfo: response.data[0].pancard,
-                    error: 'Internal Server Error',
-                });
-            }
-        } catch (error) {
-            this.setState({
-                panCardInfo: null,
-                error: error.response?.data?.message || 'An error occurred',
-            });
-        }
-    };
-
-    render() {
-        const { file, panCardInfo, error } = this.state;
-
-        return (
-            <div className="pb-4 flex flex-col items-center min-h-screen bg-white font-montserrat">
-                <div className="rounded-lg shadow-lg mt-6 text-black md:w-1/2 border-[1.5px] border-[#00acc1]">
-                    <div className="flex justify-between mb-6 bg-teal-400 px-6 py-4 text-white rounded-tl-lg rounded-tr-lg">
-                        <h1 className="text-xl font-semibold">PAN CARD Upload</h1>
-                        <button
-                            onClick={this.handleVerifyClick}
-                            className="w-fit bg-white transition-all text-teal-400 hover:text-white p-2 active:bg-teal-100 rounded hover:border-[1.5px] hover:bg-transparent hover:border-white"
-                        >
-                            PAN API
-                        </button>
-                    </div>
-                    <div className="mb-4 w-3/4 mx-auto">
-                        {error && <div className="bg-red-500 w-full px-2 py-2 text-white text-sm mb-2">{error}</div>}
-                        <label className="block text-lg">Upload Pan Card Image</label>
-                        <input
-                            type="file"
-                            onChange={this.handleFileChange}
-                            className="w-full p-2 border border-teal-400 rounded"
-                        />
-                    </div>
-                    <div className='flex justify-center'>
-                        <button
-                            onClick={this.handleVerifyClick}
-                            className="w-fit px-6 mt-4 mb-4 bg-teal-400 transition-all text-white hover:text-teal-500 p-2 active:bg-teal-100 rounded hover:border-[1.5px] hover:bg-transparent hover:border-[#00acc1]"
-                        >
-                            Verify
-                        </button>
-                    </div>
-                </div>
-
-                {/* Display PAN card information below */}
-                {panCardInfo &&
-                    <div className="mt-4 md:w-1/2 rounded-lg border-[1.5px] border-[#00acc1]">
-                        {panCardInfo && (
-                            <div className="bg-white rounded-lg text-black">
-                                <h2 className="text-lg px-3 py-3 bg-green-500 rounded-tl-lg rounded-tr-lg text-white font-semibold">PAN Card Details</h2>
-                                <p className='px-3 py-2 text-base'><strong className='mr-2'>Pan Description:</strong>
-                                    {panCardInfo.raw_ocr_texts.map((ele)=>{return(<span className='text-sm' key={ele}>{ele} </span>)})}
-                                </p>
-                                <p className='px-3 py-2 flex gap-x-3 text-sm'><strong>Name:</strong>
-                                    {panCardInfo.name || 'null'}
-                                </p>
-
-                                <p className='px-3 py-2 flex gap-x-3 text-sm'><strong>Date Of Birth:</strong>
-                                    {panCardInfo.date_of_birth || 'null'}
-                                </p>
-
-                                <p className='px-3 py-2 flex gap-x-3 text-sm'><strong>PAN Number:</strong>
-                                    {panCardInfo.pan_number || 'null'}
-                                </p>
-
-                                {/* You can include more details here if needed */}
-                                
-                            </div>
-                        )}
-                    </div>
-                }
+  return (
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
+      <div className="w-full max-w-lg bg-white shadow-lg rounded-lg overflow-hidden">
+        <div className="bg-blue-600 p-4 flex justify-between items-center">
+          <h3 className="text-xl font-semibold text-white">PAN Card Upload</h3>
+          <Link
+            to="/dashboard/kyc/pancard_api"
+            className="bg-white text-blue-600 px-3 py-1 rounded shadow hover:bg-gray-200"
+          >
+            PAN Card APIs
+          </Link>
+        </div>
+        <div className="p-4">
+          {error && (
+            <div className="bg-red-500 text-white p-3 rounded mb-4">
+              {error}
             </div>
-        );
-    }
-}
+          )}
+          {loading && (
+            <div className="text-center mb-4 text-xl text-blue-600">
+              Uploading file, please wait...
+            </div>
+          )}
+          <form onSubmit={handleSubmit} className="mt-4">
+            <div className="mb-4">
+              <label htmlFor="file" className="block text-gray-700 text-sm font-bold mb-2">
+                PAN Card Image
+              </label>
+              <input
+                type="file"
+                id="file"
+                name="file"
+                onChange={handleFileChange}
+                required
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+            <button
+              type="submit"
+              className="bg-green-500 hover:bg-green-400 text-white font-bold py-2 px-4 rounded"
+            >
+              Upload
+            </button>
+          </form>
+
+          {response && response.statusCode === 200 && (
+            <div className="mt-6 bg-green-100 text-green-800 p-4 rounded">
+              <h3 className="text-lg font-semibold">PAN Card Details</h3>
+              <div className="mt-4">
+                <p><strong>PAN Number:</strong> {response.pancard?.pan_number || 'null'}</p>
+                <p><strong>DOB:</strong> {response.pancard?.pan_dob || 'null'}</p>
+                <p><strong>Father Name:</strong> {response.pancard?.pan_fname || 'null'}</p>
+                <p><strong>Full Name:</strong> {response.pancard?.pan_name || 'null'}</p>
+              </div>
+            </div>
+          )}
+
+          {response && response.pancard2 && response.pan_verified === 1 && (
+            <div className="mt-6 bg-green-100 text-green-800 p-4 rounded">
+              <h3 className="text-lg font-semibold">PAN Card Detailed Information</h3>
+              <div className="mt-4">
+                <p><strong>Pan Verified:</strong> {response.pan_verified === 1 ? 'Verified' : 'Failed'}</p>
+                <p><strong>Full Name:</strong> {response.pancard2?.fullname || 'null'}</p>
+                <p><strong>PAN no:</strong> {response.pancard2?.pancard || 'null'}</p>
+                <p><strong>PAN Verification Status:</strong> {response.pancard2?.statusCode || 'null'}</p>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default PanCardUpload;

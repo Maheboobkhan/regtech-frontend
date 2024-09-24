@@ -660,6 +660,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { HiChevronDown } from 'react-icons/hi';
 import { FiLogIn } from 'react-icons/fi';
 import withLocation from './withLocation';
+import Cookies from 'js-cookie';
 
 class Navbar extends Component {
   constructor(props) {
@@ -669,6 +670,7 @@ class Navbar extends Component {
       isNavbarFixed: false,
       isOpen: false,
       isServicesDropdownOpen: false,
+      token: '',
     };
 
     this.toggleMenu = this.toggleMenu.bind(this);
@@ -681,6 +683,8 @@ class Navbar extends Component {
   }
 
   componentDidMount() {
+    const token = Cookies.get('authToken');
+    this.setState({token: token});
     window.addEventListener('scroll', this.handleScroll);
     document.addEventListener('mousedown', this.handleClickOutside);
   }
@@ -758,7 +762,7 @@ class Navbar extends Component {
     const { location } = this.props;
     const shouldHideFooter = location.pathname;
 
-    const { isMenuOpen, isNavbarFixed, isOpen, isServicesDropdownOpen } = this.state;
+    const { isMenuOpen, isNavbarFixed, isOpen, isServicesDropdownOpen, token } = this.state;
 
     return (
       <nav className={`md:px-10 px-2 py-2 fixed top-0 left-0 w-full transition-all duration-300 ${isNavbarFixed ? 'bg-[#f1c2d9] border-gray-300 z-50' : 'bg-[#fff3f9] z-10'}`}>
@@ -832,11 +836,15 @@ class Navbar extends Component {
                 <Link to="#" className="block px-4 py-2 text-gray-700 border-b border-gray-300 hover:bg-[#e27daa]" onClick={this.removeMenu}>Vehicle Verification</Link>
               </div>
             </div> */}
-            <button className='ml-10 hidden md:flex items-center px-4 py-1.5 font-bold hover:border-none hover:underline hover:text-[#e27daa] bg-white font-myfont text-[#e27daa] border-2 border-[#e27daa] cursor-pointer transition-all duration-400'>
+            {this.state.token ? <button className='ml-10 hidden md:flex items-center px-4 py-1.5 font-bold hover:border-none hover:underline hover:text-[#e27daa] bg-white font-myfont text-[#e27daa] border-2 border-[#e27daa] cursor-pointer transition-all duration-400'>
+              <Link to="/dashboard" className="flex items-center">
+                <FiLogIn className='mr-2' />Go to Dashboard
+              </Link>
+            </button>: <button className='ml-10 hidden md:flex items-center px-4 py-1.5 font-bold hover:border-none hover:underline hover:text-[#e27daa] bg-white font-myfont text-[#e27daa] border-2 border-[#e27daa] cursor-pointer transition-all duration-400'>
               <Link to="/login" className="flex items-center">
                 <FiLogIn className='mr-2' />Login
               </Link>
-            </button>
+            </button>}
           </ul>
 
           <div className={`md:hidden absolute md:top-[66.5px] top-[52px] right-0 min-h-screen z-50 w-2/3 bg-[#F7F7FF] transform ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'} transition-transform ease-in-out duration-300 overflow-y-auto`}>

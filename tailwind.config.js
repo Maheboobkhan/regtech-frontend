@@ -28,6 +28,9 @@ export default {
         primary: '#e27daa',
         secondary: 'black',
       },
+      boxShadow: {
+        'custom': '1px 1px 20px 4px rgba(0, 0, 0, 0.75)',
+      },
       keyframes: {
         typing: {
           "0%": {

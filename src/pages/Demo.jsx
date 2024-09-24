@@ -11,7 +11,8 @@ class Demo extends Component {
   render() {
     return (
       <>
-      <div className="max-w-lg mt-20 mb-16 mx-auto p-4 bg-white rounded-lg shadow-lg font-myfont" data-aos="fade-up-left">
+      <div className='min-h-[100vh]'>
+      <div className="max-w-lg md:mt-36 mt-20 mb-16 mx-auto p-4 bg-white rounded-lg shadow-lg font-myfont" data-aos="fade-up-left">
         <h2 className="text-2xl font-bold mb-6 text-[#e27daa] w-fit mx-auto">Schedule Demo</h2>
         <form className="space-y-6">
           <div className="relative">
@@ -91,6 +92,7 @@ class Demo extends Component {
             Schedule Demo
           </button>
         </form>
+      </div>
       </div>
 
 {/* <FooterForAllComponent /> */}

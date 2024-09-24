@@ -1,128 +1,123 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
-import Cookies from 'js-cookie'; // Import js-cookie for handling cookies
+import Cookies from 'js-cookie';
 
-class PanCardOCR extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            file: null, // To store the selected file
-            panCardInfo: null, // To store PAN card information
-            error: null,     // To store error message
-        };
-    }
+const PanCardOCR = () => {
+    const [file, setFile] = useState(null);
+    const [response, setResponse] = useState(null);
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
 
-    handleFileChange = (event) => {
-        this.setState({ file: event.target.files[0] });
+    const handleFileChange = (e) => {
+        setFile(e.target.files[0]);
     };
 
-    handleVerifyClick = async () => {
-        const { file } = this.state;
-        const accessToken = Cookies.get('authToken'); // Fetch access token from cookies
-        let response;
-
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         if (!file) {
-            this.setState({ error: 'Please select a file' });
+            setError('Please select a file');
             return;
         }
+        const token = Cookies.get('authToken');
 
-        // Prepare form data
         const formData = new FormData();
         formData.append('file', file);
 
+        setLoading(true);
+        setError(null);
+        setResponse(null);
+
         try {
-            response = await axios.post(
-                'http://regtechapi.in/api/pancard_ocr',
-                formData,
-                {
-                    headers: {
-                        'AccessToken': accessToken,
-                        'Content-Type': 'multipart/form-data',
-                    },
+            const result = await axios.post('http://regtechapi.in/api/pancard_ocr', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'AccessToken': token // Replace 'token' with the actual token
                 }
-            );
-
-            console.log('API Response:', response.data);
-
-            // Assuming the API returns data with keys 'date_of_birth', 'name', and 'pan_number'
-            if (response.data.pancard) {
-                this.setState({
-                    panCardInfo: response.data.pancard,
-                    error: null,
-                });
-            }
-        } catch (error) {
-            this.setState({
-                panCardInfo: null,
-                error: error.response?.data?.message || 'An error occurred',
             });
+            setResponse(result.data);
+        } catch (err) {
+            setError(err.response ? err.response.data.message : 'An error occurred');
+        } finally {
+            setLoading(false);
         }
     };
 
-    render() {
-        const { file, panCardInfo, error } = this.state;
-
-        return (
-            <div className="pb-4 flex flex-col items-center min-h-screen bg-white font-montserrat">
-                <div className="rounded-lg shadow-lg mt-6 text-black md:w-1/2 border-[1.5px] border-[#00acc1]">
-                    <div className="flex justify-between mb-6 bg-teal-400 px-6 py-4 text-white rounded-tl-lg rounded-tr-lg">
-                        <h1 className="text-xl font-semibold">PAN CARD OCR</h1>
+    return (
+        <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-green-50 via-blue-50 to-purple-50">
+            <div className="w-full max-w-lg bg-white shadow-lg rounded-lg overflow-hidden">
+                <div className="bg-[#00acc1] p-4">
+                    <h3 className="text-xl font-semibold text-white">PAN CARD OCR</h3>
+                </div>
+                <div className="p-4">
+                    {loading && (
+                        <div className="flex justify-center items-center mb-4">
+                            <div className="text-xl text-blue-300">
+                                Uploading file <span className="text-blue-300">please wait...</span>
+                            </div>
+                        </div>
+                    )}
+                    {error && (
+                        <div className="bg-red-500 text-white p-3 rounded mb-4">
+                            {error}
+                        </div>
+                    )}
+                    <form onSubmit={handleSubmit} className="mt-4" encType="multipart/form-data">
+                        <div className="mb-4">
+                            <label htmlFor="file" className="block text-gray-700 text-sm font-bold mb-2">
+                                PAN Card Image
+                            </label>
+                            <input
+                                type="file"
+                                id="file"
+                                name="file"
+                                onChange={handleFileChange}
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                required
+                            />
+                        </div>
                         <button
-                            onClick={this.handleVerifyClick}
-                            className="w-fit bg-white transition-all text-teal-400 hover:text-white p-2 active:bg-teal-100 rounded hover:border-[1.5px] hover:bg-transparent hover:border-white"
-                        >
-                            PAN API
-                        </button>
-                    </div>
-                    <div className="mb-4 w-3/4 mx-auto">
-                        {error && <div className="bg-red-500 w-full px-2 py-2 text-white text-sm mb-2">{error}</div>}
-                        <label className="block text-lg">Upload Pan Card Image</label>
-                        <input
-                            type="file"
-                            onChange={this.handleFileChange}
-                            className="w-full p-2 border border-teal-400 rounded"
-                        />
-                    </div>
-                    <div className='flex justify-center'>
-                        <button
-                            onClick={this.handleVerifyClick}
-                            className="w-fit px-6 mt-4 mb-4 bg-teal-400 transition-all text-white hover:text-teal-500 p-2 active:bg-teal-100 rounded hover:border-[1.5px] hover:bg-transparent hover:border-[#00acc1]"
+                            type="submit"
+                            className="bg-green-500 hover:bg-green-400 text-white font-bold py-2 px-4 rounded"
                         >
                             Verify
                         </button>
-                    </div>
+                    </form>
+                    {response && response.status_code === 200 && (
+                        <div className="bg-green-400 text-white p-3 rounded mt-4">
+                            <h3 className="text-lg font-semibold">PAN CARD Details</h3>
+                            <p><strong>Pan Description: </strong>
+                                {response.pancard.raw_ocr_texts ? response.pancard.raw_ocr_texts.join(', ') : "null"}
+                            </p>
+                            <p><strong>Name: </strong>
+                                {response.pancard.name || 'null'}
+                            </p>
+                            <p><strong>Date Of Birth: </strong>
+                                {response.pancard.date_of_birth || 'null'}
+                            </p>
+                            <p><strong>Pan Number: </strong>
+                                {response.pancard.pan_number || 'null'}
+                            </p>
+                        </div>
+                    )}
+                    {response && response.status_code === 102 && (
+                        <div className="bg-red-500 text-white p-3 rounded mt-4">
+                            Invalid file type, must be a PAN card image.
+                        </div>
+                    )}
+                    {response && response.status_code === 404 && (
+                        <div className="bg-red-500 text-white p-3 rounded mt-4">
+                            No file provided.
+                        </div>
+                    )}
+                    {response && response.status_code === 500 && (
+                        <div className="bg-red-500 text-white p-3 rounded mt-4">
+                            Internal Server Error. Please contact techsupport@docboyz.in for more details.
+                        </div>
+                    )}
                 </div>
-
-                {/* Display PAN card information below */}
-                {panCardInfo &&
-                    <div className="mt-4 md:w-1/2 rounded-lg border-[1.5px] border-[#00acc1]">
-                        {panCardInfo && (
-                            <div className="bg-white rounded-lg text-black">
-                                <h2 className="text-lg px-3 py-3 bg-green-500 rounded-tl-lg rounded-tr-lg text-white font-semibold">PAN Card Details</h2>
-                                <p className='px-3 py-2 text-base'><strong className='mr-2'>Pan Description:</strong>
-                                    {panCardInfo.raw_ocr_texts.map((ele)=>{return(<span className='text-sm' key={ele}>{ele} </span>)})}
-                                </p>
-                                <p className='px-3 py-2 flex gap-x-3 text-sm'><strong>Name:</strong>
-                                    {panCardInfo.name || 'null'}
-                                </p>
-
-                                <p className='px-3 py-2 flex gap-x-3 text-sm'><strong>Date Of Birth:</strong>
-                                    {panCardInfo.date_of_birth || 'null'}
-                                </p>
-
-                                <p className='px-3 py-2 flex gap-x-3 text-sm'><strong>PAN Number:</strong>
-                                    {panCardInfo.pan_number || 'null'}
-                                </p>
-
-                                {/* You can include more details here if needed */}
-                                
-                            </div>
-                        )}
-                    </div>
-                }
             </div>
-        );
-    }
-}
+        </div>
+    );
+};
 
 export default PanCardOCR;

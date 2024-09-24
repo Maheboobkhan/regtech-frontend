@@ -107,6 +107,7 @@ class ChatComponent extends Component {
         try {
             const response = await axios.post(`http://localhost:8000/api/users/${id}/clientmessage`, { message: this.state.clientMessage });
             this.setState({ clientMessage: '' })
+            console.log('client: ',response)
 
             const messageResponse = await axios.get(`http://localhost:8000/api/users/${id}/clientmessage`)
             console.log('messageRes: ', messageResponse.data);
@@ -165,7 +166,7 @@ class ChatComponent extends Component {
 
     render() {
         const { isModalOpen, message, animate, services, selectedService, isUser, messages, isFormOpen, chats, isChat, clientMessage, ownerMessage, form } = this.state;
-        console.log('this: ', messages)
+        console.log('this: ', this.state.message)
 
         return (
             <div className="relative z-[1500]">

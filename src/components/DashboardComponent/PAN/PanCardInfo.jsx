@@ -1,163 +1,121 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
-import Cookies from 'js-cookie'; // Import js-cookie for handling cookies
+import Cookies from 'js-cookie';
+import { Link } from 'react-router-dom';
 
-class PanCardInfo extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            panNumber: '',
-            panCardInfo: null, // To store PAN card information
-            error: null,     // To store error message
-        };
+const PanCardInfo = () => {
+  const [panNumber, setPanNumber] = useState('');
+  const [response, setResponse] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const token = Cookies.get('authToken');
+
+    if (!token) {
+      setError('Auth token is missing');
+      return;
     }
 
-    handleInputChange = (event) => {
-        this.setState({ panNumber: event.target.value });
-    };
+    if (!panNumber) {
+      setError('Please enter a PAN number');
+      return;
+    }
 
-    handleVerifyClick = async () => {
-        const { panNumber } = this.state;
-        const accessToken = Cookies.get('authToken'); // Fetch access token from cookies
-        let response;
+    setLoading(true);
+    setError(null);
 
-        if (!panNumber) {
-            this.setState({ error: 'Please enter a PAN number' });
-            return;
+    try {
+      const { data } = await axios.post(
+        'http://regtechapi.in/api/pancard_details',
+        { pan_number: panNumber },
+        {
+          headers: {
+            'AccessToken': token,
+            'Content-Type': 'application/json',
+          },
         }
+      );
+      setResponse(data);
+    } catch (err) {
+      setError(err.response ? err.response.data.message : 'Error fetching PAN card details');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        // Prepare form data
-        const formData = new FormData();
-        formData.append('pan_number', panNumber);
-
-        try {
-            response = await axios.post(
-                'http://regtechapi.in/api/pancard_details',
-                formData,
-                {
-                    headers: {
-                        'AccessToken': accessToken,
-                        'Content-Type': 'multipart/form-data',
-                    },
-                }
-            );
-
-            console.log('API Response:', response.data);
-
-            // Assuming the API returns data with keys 'fullName', 'panNumber', and 'category'
-            if (response.data.pancard.data) {
-                this.setState({
-                    panCardInfo: response.data.pancard.data,
-                    error: null,
-                });
-            }
-        } catch (error) {
-            this.setState({
-                panCardInfo: null,
-                error: response.data.message,
-            });
-        }
-    };
-
-    render() {
-        const { panNumber, panCardInfo, error } = this.state;
-
-        return (
-            <div className="flex flex-col items-center min-h-screen bg-white font-montserrat">
-                <div className="rounded-lg shadow-lg mt-6 text-black md:w-1/2 border-[1.5px] border-[#00acc1]">
-                    <div className="flex justify-between mb-6 bg-teal-400 px-6 py-4 text-white rounded-tl-lg rounded-tr-lg">
-                        <h1 className="text-xl font-semibold">PAN CARD INFO.</h1>
-                        <button
-                            onClick={this.handleVerifyClick}
-                            className="w-fit bg-white transition-all text-teal-400 hover:text-white p-2 active:bg-teal-100 rounded hover:border-[1.5px] hover:bg-transparent hover:border-white"
-                        >
-                            PAN API
-                        </button>
-                    </div>
-                    <div className="mb-4 w-3/4 mx-auto">
-                        {error && <div className="bg-red-500 w-full px-2 py-2 text-white text-sm mb-2">{error}</div>}
-                        <label className="block text-lg">Pan Number</label>
-                        <input
-                            type="text"
-                            value={panNumber}
-                            onChange={this.handleInputChange}
-                            placeholder="Ex: ABCDE1234N"
-                            className="w-full p-2 border border-teal-400 rounded"
-                        />
-                    </div>
-                    <div className='flex justify-center'>
-                        <button
-                            onClick={this.handleVerifyClick}
-                            className="w-fit px-6 mt-4 mb-4 bg-teal-400 transition-all text-white hover:text-teal-500 p-2 active:bg-teal-100 rounded hover:border-[1.5px] hover:bg-transparent hover:border-[#00acc1]"
-                        >
-                            Verify
-                        </button>
-                    </div>
-                </div>
-
-                {/* Display PAN card information below */}
-                {panCardInfo &&
-                    <div className="mt-4 md:w-1/2 rounded-lg border-[1.5px] border-[#00acc1]">
-                        {panCardInfo && (
-                            <div className="bg-white rounded-lg text-black">
-                                <h2 className="text-lg px-3 py-3 bg-green-500 rounded-tl-lg rounded-tr-lg text-white font-semibold">PAN Card Details</h2>
-                                <p className='px-3 py-2 flex gap-x-3 text-sm'><strong>Full Name:</strong>
-                                    {panCardInfo.fullName ? panCardInfo.fullName : 'null'}
-
-                                </p>
-                                <p className='px-3 py-2 flex gap-x-3 text-sm'><strong>PAN Number:</strong>
-                                    {panCardInfo.panNumber ? panCardInfo.panNumber : 'null'}
-
-                                </p>
-
-                                <p className='px-3 py-2 flex gap-x-3 text-sm'><strong>is Valid:</strong>
-                                    {panCardInfo.isValid === true ? 'True' : 'False'}
-
-                                </p>
-                                <p className='px-3 py-2 flex gap-x-3 text-sm'><strong>First Name:</strong>
-                                    {panCardInfo.firstName ? panCardInfo.firstName : 'null'}
-
-                                </p>
-
-                                <p className='px-3 py-2 flex gap-x-3 text-sm'><strong>Middle Name:</strong>
-                                    {panCardInfo.middleName ? panCardInfo.middleName : 'null'}
-
-                                </p>
-                                <p className='px-3 py-2 flex gap-x-3 text-sm'><strong>Last Name:</strong>
-                                    {panCardInfo.lastName ? panCardInfo.lastName : 'null'}
-
-                                </p>
-
-                                <p className='px-3 py-2 flex gap-x-3 text-sm'><strong>Pan Status Code:</strong>
-                                    {panCardInfo.panStatusCode ? panCardInfo.panStatusCode : 'null'}
-
-                                </p>
-
-                                <p className='px-3 py-2 flex gap-x-3 text-sm'><strong>Pan Status:</strong>
-                                    {panCardInfo.panStatus ? panCardInfo.panStatus : 'null'}
-
-                                </p>
-
-                                <p className='px-3 py-2 flex gap-x-3 text-sm'><strong>Aadhar Seeding Status:</strong>
-                                    {panCardInfo.aadhaarSeedingStatus === true ? 'True' : 'False'}
-
-                                </p>
-
-                                <p className='px-3 py-2 flex gap-x-3 text-sm'><strong>Aadhar Seeding Status Code:</strong>
-                                    {panCardInfo.aadhaarSeedingStatusCode ? panCardInfo.aadhaarSeedingStatusCode : 'null'}
-
-                                </p>
-                                <p className='px-3 py-2 flex gap-x-3 text-sm'><strong>Last updatedOn:</strong>
-                                    {panCardInfo.lastUpdatedOn ? panCardInfo.lastUpdatedOn : 'null'}
-
-                                </p>
-                            </div>
-                        )}
-                    </div>
-                }
+  return (
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
+      <div className="w-full max-w-3xl bg-white shadow-lg rounded-lg overflow-hidden">
+        <div className="bg-blue-600 p-4 flex justify-between items-center">
+          <h3 className="text-xl font-semibold text-white">PAN CARD INFO.</h3>
+          <Link
+            to="/dashboard/kyc/pancard_api"
+            className="bg-white text-blue-600 px-3 py-1 rounded shadow hover:bg-gray-200"
+          >
+            PAN Card APIs
+          </Link>
+        </div>
+        <div className="p-4">
+          {error && (
+            <div className="bg-red-500 text-white p-3 rounded mb-4">
+              {error}
             </div>
-        );
-    }
-}
+          )}
+          {loading && (
+            <div className="text-center mb-4 text-xl text-blue-600">
+              Verifying PAN number, please wait...
+            </div>
+          )}
+          <form onSubmit={handleSubmit} className="mt-4">
+            <div className="mb-4">
+              <label htmlFor="pan_number" className="block text-gray-700 text-sm font-bold mb-2">
+                PAN Number
+              </label>
+              <input
+                type="text"
+                id="pan_number"
+                name="pan_number"
+                value={panNumber}
+                onChange={(e) => setPanNumber(e.target.value)}
+                maxLength="10"
+                minLength="10"
+                placeholder="Ex: ABCDE1234N"
+                required
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              />
+            </div>
+            <button
+              type="submit"
+              className="bg-green-500 hover:bg-green-400 text-white font-bold py-2 px-4 rounded"
+            >
+              Verify
+            </button>
+          </form>
+
+          {response && response.statusCode === 200 && (
+            <div className="mt-6 bg-green-100 text-green-800 p-4 rounded">
+              <h3 className="text-lg font-semibold">PAN CARD Details</h3>
+              <div className="mt-4">
+                <p><strong>Full Name:</strong> {response.pancard?.data?.fullName || 'null'}</p>
+                <p><strong>PAN no:</strong> {response.pancard?.data?.panNumber || 'null'}</p>
+                <p><strong>Is Valid:</strong> {response.pancard?.data?.isValid || 'null'}</p>
+                <p><strong>First Name:</strong> {response.pancard?.data?.firstName || 'null'}</p>
+                <p><strong>Middle Name:</strong> {response.pancard?.data?.middleName || 'null'}</p>
+                <p><strong>Last Name:</strong> {response.pancard?.data?.lastName || 'null'}</p>
+                <p><strong>PAN Status Code:</strong> {response.pancard?.data?.panStatusCode || 'null'}</p>
+                <p><strong>PAN Status:</strong> {response.pancard?.data?.panStatus || 'null'}</p>
+                <p><strong>Aadhaar Seeding Status:</strong> {response.pancard?.data?.aadhaarSeedingStatus || 'null'}</p>
+                <p><strong>Aadhaar Seeding Status Code:</strong> {response.pancard?.data?.aadhaarSeedingStatusCode || 'null'}</p>
+                <p><strong>Last Updated On:</strong> {response.pancard?.data?.lastUpdatedOn || 'null'}</p>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default PanCardInfo;
