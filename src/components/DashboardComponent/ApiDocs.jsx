@@ -96,10 +96,11 @@ class ApiDocumentation extends Component {
         this.setState({ error: "Token not found" });
         return;
     }
+    const domain = localStorage.getItem('domain');
 
     try {
         const response = await axios.get(
-            `http://localhost:8000/api/getuser/${token}`
+            `${domain}/getuser/${token}`
         );
         console.log(response);
         this.setState({ accessToken: response.data.access_token });

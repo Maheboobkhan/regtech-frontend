@@ -23,8 +23,9 @@ const ITRSubmitOTP = () => {
     const token = Cookies.get('authToken');
 
     try {
+      const domain = localStorage.getItem('domain');
       const res = await axios.post(
-        'http://localhost:8000/api/itr_submit_otp',
+        `${domain}/itr_submit_otp`,
         { client_id: clientId, otp },
         { headers: { AccessToken: token } }
       );

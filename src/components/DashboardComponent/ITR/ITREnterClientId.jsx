@@ -16,10 +16,11 @@ const ITREnterClientId = () => {
     e.preventDefault();
     setLoading(true);
     const token = Cookies.get('authToken');
+    const domain = localStorage.getItem('domain');
 
     try {
       const res = await axios.post(
-        'http://localhost:8000/api/itr_enter_clientid',
+        `${domain}/itr_enter_clientid`,
         { client_id: clientId },
         { headers: { AccessToken: token } }
       );

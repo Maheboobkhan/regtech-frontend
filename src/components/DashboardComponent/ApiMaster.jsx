@@ -23,8 +23,9 @@ class ApiMaster extends Component {
   }
 
   fetchApiGroups = async (token) => {
+    const domain = localStorage.getItem('domain');
     try {
-      const response = await fetch(`http://localhost:8000/api/apigroup/${token}`);
+      const response = await fetch(`${domain}/apigroup/${token}`);
       const data = await response.json();
       this.setState({ apiGroups: data.api_group || [] });
     } catch (error) {
@@ -33,8 +34,9 @@ class ApiMaster extends Component {
   }
 
   fetchApiOptions = async (token) => {
+    const domain = localStorage.getItem('domain');
     try {
-      const response = await fetch(`http://localhost:8000/api/apimaster/${token}`);
+      const response = await fetch(`${domain}/apimaster/${token}`);
       const data = await response.json();
       this.setState({ apiOptions: data });
     } catch (error) {
@@ -68,10 +70,10 @@ class ApiMaster extends Component {
     });
 
     console.log(data);
-
+    const domain = localStorage.getItem('domain');
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/updateapimaster",
+        `${domain}/updateapimaster`,
         data
       );
       console.log(response);
@@ -140,7 +142,7 @@ class ApiMaster extends Component {
                             {group.group_name}
                           </td>
                         )}
-                        <td className="py-3 px-4 border-b border-gray-200 text-sm text-gray-700">
+                        <td className="py-3 w-1/4 pl-4 border-b border-gray-200 text-sm text-gray-700">
                           <input
                             type="text"
                             value={option.api_name}

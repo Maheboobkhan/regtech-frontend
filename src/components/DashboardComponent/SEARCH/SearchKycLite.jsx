@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 const KycLiteSearch = () => {
   const [panNumber, setPanNumber] = useState('');
@@ -19,16 +20,28 @@ const KycLiteSearch = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const token = Cookies.get('authToken');
     setLoading(true);
     setError(null);
     setResponse(null);
 
     try {
-      const res = await axios.post('http://regtechapi.in/api/search', {
+      // const res = await axios.post('http://regtechapi.in/api/search_v2', {
+      //   pano: panNumber,
+      //   dob: dob,
+      //   headers:{
+      //     AccessToken: token,
+      //   }
+      // });
+      const res = await axios.post('http://regtechapi.in/api/search_v2', {
         pano: panNumber,
-        dob: dob
-      });
-      console.log(res)
+        dob: dob,
+    }, {
+        headers: {
+            AccessToken: token,
+        }
+    });
+    console.log(res)
       setResponse(res.data);
     } catch (err) {
       setError('An error occurred. Please try again later.');

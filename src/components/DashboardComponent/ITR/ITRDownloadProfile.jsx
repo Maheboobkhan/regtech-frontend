@@ -17,10 +17,11 @@ const ITRProfile = () => {
     setLoading(true);
     setError('');
     const token = Cookies.get('authToken');
+    const domain = localStorage.getItem('domain');
 
     try {
       const response = await axios.post(
-        'http://localhost:8000/api/itr_download_profile',
+        `${domain}/itr_download_profile`,
         { client_id: clientId },
         { headers: { AccessToken: token } }
       );

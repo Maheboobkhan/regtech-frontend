@@ -18,8 +18,9 @@ class SchemeTypeEdit extends Component {
   }
 
   fetchScheme = async () => {
+    const domain = localStorage.getItem('domain');
       const { id } = this.state;
-      const response = await axios.get(`http://localhost:8000/api/getschemetypemasterbyid/${this.props.params.id}`);
+      const response = await axios.get(`${domain}/getschemetypemasterbyid/${this.props.params.id}`);
       console.log(response);
       const { name, hit_limits } = response.data;
       this.setState({ name, hitLimit: hit_limits });
@@ -40,9 +41,10 @@ class SchemeTypeEdit extends Component {
     }
 
     this.setState({ submitting: true });
+    const domain = localStorage.getItem('domain');
 
     try {
-      const response = await axios.post(`http://localhost:8000/api/updateschemetypemaster/${this.props.params.id}`, {
+      const response = await axios.post(`${domain}/updateschemetypemaster/${this.props.params.id}`, {
         scheme_name: name,
         hit_limits: hitLimit
       });

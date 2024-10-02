@@ -19,6 +19,7 @@ const BasicGSTIN = () => {
                     'Content-Type': 'application/json'
                 }}
             );
+            console.log(result)
             setResponse(result.data);
             setError(null);
         } catch (err) {
@@ -64,7 +65,7 @@ const BasicGSTIN = () => {
                     </div>
                 )}
                 {response && response.status_code === 200 && (
-                    <div className="mt-6 bg-green-100 text-green-700 p-4 rounded-md">
+                    <div className="mt-6 bg-green-100 text-green-700 p-4 rounded-md overflow-x-auto">
                         <h3 className="text-lg font-semibold mb-2">BASIC GSTIN Details</h3>
                         <p><strong>StjCd:</strong> {response.response.stjCd || 'null'}</p>
                         <p><strong>LegalName:</strong> {response.response.lgnm || 'null'}</p>
@@ -150,6 +151,7 @@ const BasicGSTIN = () => {
                         )}
                     </div>
                 )}
+                {response && response.statusCode === 500 && <div className='bg-red-500 text-white p-4 mt-4 rounded'>{response.message}</div>}
             </div>
         </div>
     );

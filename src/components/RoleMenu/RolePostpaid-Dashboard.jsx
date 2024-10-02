@@ -154,6 +154,17 @@ import ITRForgetPassword from "../DashboardComponent/ITR/ITRForgotPassword";
 import CreditScoreReport from "../DashboardComponent/CREDIT SCORE/CreditReport";
 import Equifax from "../DashboardComponent/CREDIT SCORE/Equifax";
 import EquifaxScore from "../DashboardComponent/CREDIT SCORE/EquifaxScore";
+import TelecomSubmitOtp from "../DashboardComponent/Other/TelecomSubmitOTP";
+import Usage from "../DashboardComponent/Other/Usage";
+import CkycDownloadApi from "../DashboardComponent/Other/CkycDownloadApi";
+import CkycDownload from "../DashboardComponent/Other/CkycDownload";
+import CkycSearchAPI from "../DashboardComponent/Other/CkycSearchApi";
+import CkycSearch from "../DashboardComponent/Other/CkycSearch";
+import BillReport from "../DashboardComponent/BillReport";
+import BankStatementReaderV1 from "../DashboardComponent/BANK/BankStatementReaderV1";
+import BankAnalyserV1 from "../DashboardComponent/BANK/BankStatementAnalyserV1";
+import ProfileForm from "../DashboardComponent/Profile";
+import ApiUsageAlert from "../DashboardComponent/DemoWarning";
 class RolePostpaid_Dashboard extends Component {
   constructor(props) {
     super(props);
@@ -198,10 +209,9 @@ class RolePostpaid_Dashboard extends Component {
 
   // fetch api master
   fetchApiMaster = async (token) => {
+    const domain = localStorage.getItem("domain");
     try {
-      const response = await axios.get(
-        `http://localhost:8000/api/apimaster/${token}`
-      );
+      const response = await axios.get(`${domain}/apimaster/${token}`);
       const data = response.data;
       if (this.state.groupIdArray.includes(1)) {
         const kycverifymenus = data.filter((menu) => menu.api_group_id === 1);
@@ -228,11 +238,10 @@ class RolePostpaid_Dashboard extends Component {
       this.setState({ error: "Token not found" });
       return;
     }
+    const domain = localStorage.getItem("domain");
 
     try {
-      const response = await axios.get(
-        `http://localhost:8000/api/getspecificuserapi/${token}`
-      );
+      const response = await axios.get(`${domain}/getspecificuserapi/${token}`);
       const groupIdArray = response.data;
       this.setState({ groupIdArray });
     } catch (error) {
@@ -247,9 +256,10 @@ class RolePostpaid_Dashboard extends Component {
       this.setState({ error: "Token not found" });
       return;
     }
+    const domain = localStorage.getItem("domain");
     try {
       const response = await axios.get(
-        `http://localhost:8000/api/getusermenupermission/${token}`
+        `${domain}/getusermenupermission/${token}`
       );
 
       const userMenuPermission = response.data;
@@ -267,9 +277,8 @@ class RolePostpaid_Dashboard extends Component {
     }
 
     try {
-      const response = await axios.get(
-        `http://localhost:8000/api/getuser/${token}`
-      );
+      const domain = localStorage.getItem("domain");
+      const response = await axios.get(`${domain}/getuser/${token}`);
       const user = response.data;
       this.setState({ user });
     } catch (error) {
@@ -413,7 +422,7 @@ class RolePostpaid_Dashboard extends Component {
               </Link>
 
               {userMenuPermission.map((user_menu) => {
-                if (user_menu.menu === "user") {
+                if (user_menu.menu === "Users") {
                   return (
                     <Link to="/dashboard/users" key={user_menu.id}>
                       <div
@@ -429,7 +438,7 @@ class RolePostpaid_Dashboard extends Component {
                   );
                 }
 
-                if (user_menu.menu === "report") {
+                if (user_menu.menu === "Report") {
                   return (
                     <Link to="/dashboard/report" key={user_menu.id}>
                       <div
@@ -493,9 +502,67 @@ class RolePostpaid_Dashboard extends Component {
                     }`}
                   >
                     {kycVerifyMenus.map((menu, index) => {
-                      const formattedRouteName = menu.route_name
-                        ? menu.route_name.replace(/\./g, "/")
-                        : "#";
+                      // const formattedRouteName = menu.route_name
+                      //   ? menu.route_name.replace(/\./g, "/")
+                      //   : "#";
+                      let formattedRouteName = "#"; // Default to "#" if route_name is not present
+
+                      if (menu.route_name) {
+                        switch (menu.route_name) {
+                          case "kyc.pancard.upload":
+                            formattedRouteName = "kyc/pancard_upload";
+                            break;
+                          case "kyc.aadhaar.upload":
+                            formattedRouteName = "kyc/aadhaar_upload";
+                            break;
+      
+                            case "kyc.voter.upload":
+                            formattedRouteName = "kyc/voter_upload";
+                            break;
+                            case "kyc.license.upload":
+                            formattedRouteName = "kyc/license_upload";
+                            break;
+                            case "kyc.pancard.details":
+                            formattedRouteName = "kyc/pancard_details";
+                            break;
+                            case "kyc.searchkyc.lite":
+                            formattedRouteName = "kyc/searchkyc_lite";
+                            break;
+                            case "kyc.pancard.new_info":
+                            formattedRouteName = "kyc/pancard_new_info";
+                            break;
+                            case "aadharExtract":
+                            formattedRouteName = "kyc/extract_aadharcard_text";
+                            break;
+                            case "pancardExtract":
+                            formattedRouteName = "kyc/extract_pancard_text";
+                            break;
+                            case "voterExtract":
+                            formattedRouteName = "kyc/extract_voterId_text";
+                            break;
+                            case "drivingLicenseExtract":
+                            formattedRouteName = "kyc/extract_drivinglicense_text";
+                            break;
+                            case "pancard_ocr":
+                            formattedRouteName = "kyc/pancard/ocr";
+                            break;
+                            case "aadharcard_mask":
+                            formattedRouteName = "kyc/aadhaar_masking";
+                            break;
+                            case "voter_ocr":
+                            formattedRouteName = "kyc/voterid/ocr";
+                            break;
+                            case "drivingLicense_ocr":
+                            formattedRouteName = "kyc/license/ocr";
+                            break;
+                            case "passport_ocr":
+                            formattedRouteName = "kyc/passport/ocr";
+                            break;
+                          
+                          default:
+                            formattedRouteName = menu.route_name.replace(/\./g, "/");
+                        }
+                      }
                       return (
                         <Link to={formattedRouteName}>
                           <li
@@ -536,9 +603,31 @@ class RolePostpaid_Dashboard extends Component {
                     }`}
                   >
                     {corporateMenus.map((menu, index) => {
-                      const formattedRouteName = menu.route_name
-                        ? menu.route_name.replace(/\./g, "/")
-                        : "#";
+                      // const formattedRouteName = menu.route_name
+                      //   ? menu.route_name.replace(/\./g, "/")
+                      //   : "#";
+                      let formattedRouteName = '#';
+                      if(menu.route_name){
+                        switch (menu.route_name) {
+                          case "gstverification":
+                            formattedRouteName = "kyc/basic/gstin";
+                            break;
+                          case "corporate_cin_basic":
+                            formattedRouteName = "kyc/corporate/basic";
+                            break;
+      
+                            case "corporate_cin_advance":
+                            formattedRouteName = "kyc/corporate/advanced";
+                            break;
+                            case "gstin_details":
+                            formattedRouteName = "kyc/gstin_details";
+                            break;
+                            
+                          
+                          default:
+                            formattedRouteName = menu.route_name.replace(/\./g, "/");
+                        }
+                      }
                       return (
                         <Link to={formattedRouteName}>
                           <li
@@ -657,22 +746,28 @@ class RolePostpaid_Dashboard extends Component {
                   Add Amount
                 </button>
               </div>
+              <Link to='/dashboard/profile'>
               <div className="flex items-center mr-4 text-black hover:text-gray-600 cursor-pointer">
                 <FaRegUser className="mr-2" />
                 <h3 className="font-bold">{user.name}</h3>
-              </div>
+              </div></Link>
             </div>
           </div>
+
+          {user.scheme_type === 'demo' && <ApiUsageAlert />}
 
           <Routes>
             <Route path="users" element={<Users />} />
             <Route path="adduser" element={<UserForm />} />
+            <Route path="profile" element={<ProfileForm />} />
             <Route path="transactionList" element={<TransactionList />} />
             <Route path="api_docs" element={<ApiDocumentation />} />
             <Route path="setNewPassword/:id" element={<SetNewPassword />} />
             <Route path="edituser/:id" element={<EditUser />} />
             <Route path="transactionList" element={<TransactionList />} />
             <Route path="report" element={<ReportList />} />
+            <Route path="get_report/:yearMonth/:userId" element={<BillReport />} />
+            <Route path="get_report/:yearMonth" element={<BillReport />} />
             <Route path="wallet" element={<UserAdminWallet />} />
             <Route path="resetPassword" element={<ResetPassword />} />
 
@@ -798,7 +893,12 @@ class RolePostpaid_Dashboard extends Component {
               path="/kyc/bank_statement"
               element={<BankStatementReader />}
             />
+            <Route
+              path="/kyc/bankstatement/reader"
+              element={<BankStatementReaderV1 />}
+            />
             <Route path="/kyc/bank_analyser" element={<BankAnalyser />} />
+            <Route path="/kyc/bankanalyser" element={<BankAnalyserV1 />} />
 
             {/* DL */}
             <Route
@@ -811,12 +911,21 @@ class RolePostpaid_Dashboard extends Component {
 
             {/* ITR */}
             <Route path="/itr/itr_initiate" element={<ITRInitiate />} />
-            <Route path="/itr/itr_enter_clientid" element={<ITREnterClientId />} />
+            <Route
+              path="/itr/itr_enter_clientid"
+              element={<ITREnterClientId />}
+            />
             <Route path="/itr/itr_download_profile" element={<ITRProfile />} />
             <Route path="/itr/itr_download" element={<ITRDownload />} />
-            <Route path="/itr/itr_download_26AS" element={<ITRDownload26AS />} />
+            <Route
+              path="/itr/itr_download_26AS"
+              element={<ITRDownload26AS />}
+            />
             <Route path="/itr/itr_submit_otp" element={<ITRSubmitOTP />} />
-            <Route path="/itr/itr_forget_password" element={<ITRForgetPassword />} />
+            <Route
+              path="/itr/itr_forget_password"
+              element={<ITRForgetPassword />}
+            />
 
             {/* VIDEO */}
             <Route path="/kyc/face_match" element={<FaceMatch />} />
@@ -906,6 +1015,12 @@ class RolePostpaid_Dashboard extends Component {
             <Route path="/kyc/fssi" element={<Fssai />} />
             <Route path="/kyc/fssi_api" element={<FssaiApi />} />
             <Route path="/kyc/upi_validation" element={<Upivalidation />} />
+            <Route path="/kyc/telecom_submit_otp" element={<TelecomSubmitOtp />} />
+            <Route path="/kyc/usage" element={<Usage />} />
+            <Route path="/kyc/ckycsearchdata" element={<CkycSearch />} />
+            <Route path="/kyc/ckycsearch_api" element={<CkycSearchAPI />} />
+            <Route path="/kyc/ckycdownload" element={<CkycDownload />} />
+            <Route path="/kyc/ckycdownload_api" element={<CkycDownloadApi />} />
 
             {/* EPFO */}
             <Route

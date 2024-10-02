@@ -23,9 +23,10 @@ class AadhaarOtpSubmit extends Component {
     e.preventDefault();
     this.setState({ loading: true, error: null });
     const token = Cookies.get('authToken');
+    const domain = localStorage.getItem('domain');
 
     axios.post(
-      'http://localhost:8000/api/aadhaar_otp_submit',
+      `${domain}/aadhaar_otp_submit`,
       `client_id=${this.state.clientId}&otp=${this.state.otp}`,
       {
         headers: {

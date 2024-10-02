@@ -36,9 +36,10 @@ class AadhaarUpload extends Component {
 
     const formData = new FormData();
     formData.append('aadharcard_img', this.state.file);
+    const domain = localStorage.getItem('domain');
 
     axios.post(
-      'http://localhost:8000/api/seachv4',
+      `${domain}/seachv4`,
       formData,
       {
         headers: {

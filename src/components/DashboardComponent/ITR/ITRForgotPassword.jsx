@@ -21,10 +21,11 @@ const ITRForgetPassword = () => {
     e.preventDefault();
     setLoading(true);
     const token = Cookies.get('authToken');
+    const domain = localStorage.getItem('domain');
 
     try {
       const res = await axios.post(
-        'http://localhost:8000/api/itr_forget_password',
+        `${domain}/itr_forget_password`,
         { client_id: clientId, password },
         { headers: { AccessToken: token } }
       );

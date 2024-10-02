@@ -101,11 +101,13 @@ const Telecom = () => {
             >
               Verify
             </button>
+            
           </form>
           <br />
-          <a href="/kyc/telecom_submit_otp" className="btn btn-success text-white">
+          <Link to="/dashboard/kyc/telecom_submit_otp" className="bg-green-500 hover:bg-green-400 text-white font-bold py-2 px-4 rounded mt-4">
             Submit OTP
-          </a>
+          </Link>
+          
           {response && response.statusCode === 200 && (
             <div className="bg-green-400 text-white p-3 rounded mt-4">
               <h3 className="text-lg font-semibold">Telecom Details</h3>

@@ -56,9 +56,8 @@ class PrepaidDashboard extends Component {
     }
 
     try {
-      const response = await axios.get(
-        `http://localhost:8000/api/getuser/${token}`
-      );
+      const domain = localStorage.getItem("domain");
+      const response = await axios.get(`${domain}/getuser/${token}`);
       const user = response.data;
       this.setState({ user });
     } catch (error) {
@@ -74,11 +73,10 @@ class PrepaidDashboard extends Component {
     }
 
     try {
-      const response = await axios.get(
-        `http://localhost:8000/api/getscheme/${token}`
-      );
+      const domain = localStorage.getItem("domain");
+      const response = await axios.get(`${domain}/getscheme/${token}`);
       const scheme = response.data;
-      console.log(scheme);
+      console.log("scheme: ", scheme);
       const aadharSchemes = scheme.filter(
         (schemeName) =>
           schemeName.api_slug === "aadhaar" ||
@@ -648,6 +646,7 @@ class PrepaidDashboard extends Component {
             if (
               (schemeName.api_slug === "cin" ||
                 schemeName.api_slug === "din" ||
+                schemeName.api_slug === "gstindetails" ||
                 schemeName.api_slug === "cinbasic" ||
                 schemeName.api_slug === "gstin" ||
                 schemeName.api_slug === "gstinconfidence") &&
@@ -778,6 +777,22 @@ class PrepaidDashboard extends Component {
                           </>
                         );
                       }
+
+                      //GSTIN Details
+                      if (schemeOption.api_slug === "gstindetails") {
+                        return (
+                          <>
+                            <Link to="/dashboard/kyc/gstin_details">
+                              <li
+                                className="hover:text-gray-700 mb-4 ml-6 hover:border-b-[1px] hover:border-gray-700 w-fit text-[#00acc1] text-sm border-b-[1px] border-[#00acc1] cursor-pointer"
+                                key={schemeOption.id}
+                              >
+                                GSTIN Details
+                              </li>
+                            </Link>
+                          </>
+                        );
+                      }
                     })}
                   </ul>
                   <button
@@ -793,6 +808,7 @@ class PrepaidDashboard extends Component {
             // **** RC **** //
             if (
               (schemeName.api_slug === "rc" ||
+                schemeName.api_slug === "rcfull" ||
                 schemeName.api_slug === "rcfullvalidation" ||
                 schemeName.api_slug === "rcvallite") &&
               countrc !== 1
@@ -887,7 +903,7 @@ class PrepaidDashboard extends Component {
             // **** Bank verification **** //
             if (
               (schemeName.api_slug === "bank_ifsc" ||
-                schemeName.api_slug === "bank-anlyser") &&
+                schemeName.api_slug === "bank_anlyser") &&
               countbank !== 1
             ) {
               countbank = 1;
@@ -901,23 +917,49 @@ class PrepaidDashboard extends Component {
                       isExpandedBankVerification ? "max-h-screen" : "max-h-24"
                     }`}
                   >
-                    <Link to="/dashboard/kyc/bank_ifsc">
+                    {scheme.map((schemeOption) => {
+                      if (schemeOption.api_slug === "bank_anlyser") {
+                        return (
+                          <>
+                            <Link to="/dashboard/kyc/bank_analyser">
+                              <li className="hover:text-gray-700 mb-4 ml-6 hover:border-b-[1px] hover:border-gray-700 w-fit text-[#00acc1] text-sm border-b-[1px] border-[#00acc1] cursor-pointer">
+                                Bank Analyser
+                              </li>
+                            </Link>
+
+                            {/* <Link to="/dashboard/kyc/bank_analyser">
+                      <li className="hover:text-gray-700 mb-4 ml-6 hover:border-b-[1px] hover:border-gray-700 w-fit text-[#00acc1] text-sm border-b-[1px] border-[#00acc1] cursor-pointer">
+                        Bank Statement Analyser
+                      </li>
+                    </Link> */}
+                          </>
+                        );
+                      }
+
+                      if(schemeOption.api_slug === "bank_ifsc"){
+                        return <>
+                        <Link to="/dashboard/kyc/verify_ifsc">
                       <li className="hover:text-gray-700 mb-4 ml-6 hover:border-b-[1px] hover:border-gray-700 w-fit text-[#00acc1] text-sm border-b-[1px] border-[#00acc1] cursor-pointer">
                         Verify IFSC
                       </li>
                     </Link>
+                        </>
+                      }
 
-                    <Link to="/dashboard/kyc/bank_statement">
+                      if(schemeOption.api_slug === "bank_statement"){
+                        return <>
+                        <Link to="/dashboard/kyc/bank_statement">
                       <li className="hover:text-gray-700 mb-4 ml-6 hover:border-b-[1px] hover:border-gray-700 w-fit text-[#00acc1] text-sm border-b-[1px] border-[#00acc1] cursor-pointer">
                         Bank Statement Reader
                       </li>
                     </Link>
+                        </>
+                      }
+                    })}
 
-                    <Link to="/dashboard/kyc/bank_analyser">
-                      <li className="hover:text-gray-700 mb-4 ml-6 hover:border-b-[1px] hover:border-gray-700 w-fit text-[#00acc1] text-sm border-b-[1px] border-[#00acc1] cursor-pointer">
-                        Bank Statement Analyser
-                      </li>
-                    </Link>
+                    
+
+                    
                   </ul>
                   <button
                     className="mt-4 text-gray-500 hover:text-gray-700 transition-colors"
@@ -1762,7 +1804,7 @@ class PrepaidDashboard extends Component {
               }`}
             >
               <Link to="/dashboard/kyc/aadhaar_validation">
-                <li className="hover:text-gray-700 mb-4 ml-6 hover:border-b-[1px] hover:border-gray-700 w-fit text-sm text-[#00acc1] border-b-[1px] border-[#00acc1] cursor-pointer">
+                <li className="hover:text-gray-700 mb-4 ml-6 hover:border-b-[1px] hover:border-gray-700 w-fit text-sm text-[#00acc1] border-b-[1px] border-[#00acc1] cursor-pointer visited:text-visited">
                   Aadhar Validation
                 </li>
               </Link>
@@ -1791,6 +1833,11 @@ class PrepaidDashboard extends Component {
                   <Link to="/dashboard/kyc/aadhar_ocr_masking">
                     <li className="hover:text-gray-700 mb-4 ml-6 hover:border-b-[1px] hover:border-gray-700 w-fit text-[#00acc1] text-sm border-b-[1px] border-[#00acc1] cursor-pointer">
                       Aadhar OCR Masking (RegTech)
+                    </li>
+                  </Link>
+                  <Link to="/dashboard/kyc/extract_aadharcard_text">
+                    <li className="hover:text-gray-700 mb-4 ml-6 hover:border-b-[1px] hover:border-gray-700 w-fit text-[#00acc1] text-sm border-b-[1px] border-[#00acc1] cursor-pointer">
+                      Aadhar Extract (RegTech)
                     </li>
                   </Link>
                 </>
@@ -1827,6 +1874,11 @@ class PrepaidDashboard extends Component {
                   <Link to="/dashboard/kyc/voterid/ocr">
                     <li className="hover:text-gray-700 mb-4 ml-6 hover:border-b-[1px] hover:border-gray-700 w-fit text-[#00acc1] text-sm border-b-[1px] border-[#00acc1] cursor-pointer">
                       VoterId OCR (RegTech)
+                    </li>
+                  </Link>
+                  <Link to="/dashboard/kyc/extract_voterId_text">
+                    <li className="hover:text-gray-700 mb-4 ml-6 hover:border-b-[1px] hover:border-gray-700 w-fit text-[#00acc1] text-sm border-b-[1px] border-[#00acc1] cursor-pointer">
+                      VoterId Extract (RegTech)
                     </li>
                   </Link>
                 </>
@@ -1883,6 +1935,11 @@ class PrepaidDashboard extends Component {
                   <Link to="/dashboard/kyc/by_pancard">
                     <li className="hover:text-gray-700 mb-4 ml-6 hover:border-b-[1px] hover:border-gray-700 w-fit text-[#00acc1] text-sm border-b-[1px] border-[#00acc1] cursor-pointer">
                       By Pan Card (RegTech)
+                    </li>
+                  </Link>
+                  <Link to="/dashboard/kyc/extract_pancard_text">
+                    <li className="hover:text-gray-700 mb-4 ml-6 hover:border-b-[1px] hover:border-gray-700 w-fit text-[#00acc1] text-sm border-b-[1px] border-[#00acc1] cursor-pointer">
+                      Pan Card Extract (RegTech)
                     </li>
                   </Link>
                 </>
@@ -2089,12 +2146,12 @@ class PrepaidDashboard extends Component {
                     </li>
                   </Link>
 
-                  <Link to="/dashboard/kyc/bank_statement">
+                  <Link to="/dashboard/kyc/bankstatement/reader">
                     <li className="hover:text-gray-700 mb-4 ml-6 hover:border-b-[1px] hover:border-gray-700 w-fit text-[#00acc1] text-sm border-b-[1px] border-[#00acc1] cursor-pointer">
                       Bank Statement Reader (RegTech)
                     </li>
                   </Link>
-                  <Link to="/dashboard/kyc/bank_analyser">
+                  <Link to="/dashboard/kyc/bankanalyser">
                     <li className="hover:text-gray-700 mb-4 ml-6 hover:border-b-[1px] hover:border-gray-700 w-fit text-[#00acc1] text-sm border-b-[1px] border-[#00acc1] cursor-pointer">
                       Bank Statement Analyser (RegTech)
                     </li>
@@ -2135,6 +2192,11 @@ class PrepaidDashboard extends Component {
                   <Link to="/dashboard/kyc/license/ocr">
                     <li className="hover:text-gray-700 mb-4 ml-6 hover:border-b-[1px] hover:border-gray-700 w-fit text-[#00acc1] text-sm border-b-[1px] border-[#00acc1] cursor-pointer">
                       Driving License OCR (RegTech)
+                    </li>
+                  </Link>
+                  <Link to="/dashboard/kyc/extract_drivinglicense_text">
+                    <li className="hover:text-gray-700 mb-4 ml-6 hover:border-b-[1px] hover:border-gray-700 w-fit text-[#00acc1] text-sm border-b-[1px] border-[#00acc1] cursor-pointer">
+                      Driving License Extract (RegTech)
                     </li>
                   </Link>
                 </>

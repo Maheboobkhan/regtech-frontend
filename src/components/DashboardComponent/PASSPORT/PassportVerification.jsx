@@ -27,6 +27,7 @@ const PassportVerification = () => {
           }
         }
       );
+      console.log(data)
       setResponse(data);
     } catch (err) {
       setError('An error occurred while processing your request.');

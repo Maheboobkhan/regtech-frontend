@@ -52,9 +52,11 @@ const MainDashboard = () => {
       return;
     }
 
+    const domain = localStorage.getItem('domain');
+
     try {
       const response = await axios.get(
-        `http://localhost:8000/api/getuser/${token}`
+        `${domain}/getuser/${token}`
       );
       setUser(response.data);
     } catch (error) {

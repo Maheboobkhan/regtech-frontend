@@ -27,9 +27,9 @@ class SchemeTypeAdd extends Component {
     }
 
     this.setState({ submitting: true });
-
+    const domain = localStorage.getItem('domain');
     try {
-      const response = await axios.post('http://localhost:8000/api/addschemetypemaster', {
+      const response = await axios.post(`${domain}/addschemetypemaster`, {
         scheme_name: name,
         hit_limits: hitLimit
       });

@@ -172,6 +172,20 @@ import ITRDownload26AS from "../DashboardComponent/ITR/ITRDownload26AS";
 import ITRSubmitOTP from "../DashboardComponent/ITR/ITRSubmitOTP";
 import ITRForgetPassword from "../DashboardComponent/ITR/ITRForgotPassword";
 import AdminUserWallet from "../DashboardComponent/AdminUserWallet";
+import TelecomSubmitOtp from "../DashboardComponent/Other/TelecomSubmitOTP";
+import Usage from "../DashboardComponent/Other/Usage";
+import CkycSearch from "../DashboardComponent/Other/CkycSearch";
+import CkycSearchAPI from "../DashboardComponent/Other/CkycSearchApi";
+import CkycDownload from "../DashboardComponent/Other/CkycDownload";
+import CkycDownloadApi from "../DashboardComponent/Other/CkycDownloadApi";
+import AadharExtract from "../DashboardComponent/AADHAR/AadharExtract";
+import PanCardExtract from "../DashboardComponent/PAN/PancardExtract";
+import VoterIdExtract from "../DashboardComponent/VOTER/VoterIdExtract";
+import LicenseExtract from "../DashboardComponent/DL/LicenseExtract";
+import BillReport from "../DashboardComponent/BillReport";
+import ReportPDF from "../DashboardComponent/ReportPDF";
+import BankAnalyserV1 from "../DashboardComponent/BANK/BankStatementAnalyserV1";
+import BankStatementReaderV1 from "../DashboardComponent/BANK/BankStatementReaderV1";
 class Role0_Dashboard extends Component {
   constructor(props) {
     super(props);
@@ -223,10 +237,9 @@ class Role0_Dashboard extends Component {
   }
 
   fetchApiMaster = async (token) => {
+    const domain = localStorage.getItem("domain");
     try {
-      const response = await axios.get(
-        `http://localhost:8000/api/apimaster/${token}`
-      );
+      const response = await axios.get(`${domain}/apimaster/${token}`);
       const data = response.data;
       const kycVerifyMenus = data.filter((menu) => menu.api_group_id === 1);
       const corporateMenus = data.filter((menu) => menu.api_group_id === 6);
@@ -256,12 +269,10 @@ class Role0_Dashboard extends Component {
   };
 
   handleAdminForm = async () => {
+    const domain = localStorage.getItem("domain");
     const token = Cookies.get("authToken");
     const formdata = `token=${token}&user=${this.state.selectedUser}&transaction_type=${this.state.paymentMethod}&amount=${this.state.amount}`;
-    const response = await axios.post(
-      "http://localhost:8000/api/billingadminwallet",
-      formdata
-    );
+    const response = await axios.post(`${domain}/billingadminwallet`, formdata);
     console.log(response);
     this.setState({ openWalletModal: false });
     if (response.data.success) {
@@ -281,11 +292,8 @@ class Role0_Dashboard extends Component {
     }&total_amounts=${(
       parseFloat(amount) + parseFloat((amount * 0.18).toFixed(2))
     ).toFixed(2)}`;
-    console.log(formdata);
-    const response = await axios.post(
-      "http://localhost:8000/api/billinguserwallet",
-      formdata
-    );
+    const domain = localStorage.getItem("domain");
+    const response = await axios.post(`${domain}/billinguserwallet`, formdata);
     console.log(response);
     if (response.data.success) {
       toast.success(response.data.success);
@@ -300,11 +308,11 @@ class Role0_Dashboard extends Component {
       this.setState({ error: "Token not found" });
       return;
     }
+    const domain = localStorage.getItem("domain");
+    console.log("domainss: ", domain);
 
     try {
-      const response = await axios.get(
-        `http://localhost:8000/api/getuser/${token}`
-      );
+      const response = await axios.get(`${domain}/getuser/${token}`);
       const user = response.data;
       console.log("uu: ", user);
       this.setState({ user });
@@ -313,21 +321,17 @@ class Role0_Dashboard extends Component {
     }
   };
 
-    getUsersAscending = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:8000/api/getallusersascending`
-        );
-        const usersAscending = response.data;
-        console.log('usersAscending: ',usersAscending);
-        this.setState({ usersAscending: usersAscending });
-      } catch (error) {
-        this.setState({ error: "Error fetching user data" });
-      }
-    };
-    
-    
-  
+  getUsersAscending = async () => {
+    const domain = localStorage.getItem("domain");
+    try {
+      const response = await axios.get(`${domain}/getallusersascending`);
+      const usersAscending = response.data;
+      console.log("usersAscending: ", usersAscending);
+      this.setState({ usersAscending: usersAscending });
+    } catch (error) {
+      this.setState({ error: "Error fetching user data" });
+    }
+  };
 
   componentDidUpdate(prevProps) {
     const { location } = this.props;
@@ -616,10 +620,66 @@ class Role0_Dashboard extends Component {
                 }`}
               >
                 {KycVerifyMenus.map((menu, index) => {
-                  const formattedRouteName = menu.route_name.replace(
-                    /\./g,
-                    "/"
-                  );
+                  // const formattedRouteName = menu.route_name.replace(
+                  //   /\./g,
+                  //   "/"
+                  // );
+                  let formattedRouteName;
+
+                  switch (menu.route_name) {
+                    case "kyc.pancard.upload":
+                      formattedRouteName = "kyc/pancard_upload";
+                      break;
+                    case "kyc.aadhaar.upload":
+                      formattedRouteName = "kyc/aadhaar_upload";
+                      break;
+
+                      case "kyc.voter.upload":
+                      formattedRouteName = "kyc/voter_upload";
+                      break;
+                      case "kyc.license.upload":
+                      formattedRouteName = "kyc/license_upload";
+                      break;
+                      case "kyc.pancard.details":
+                      formattedRouteName = "kyc/pancard_details";
+                      break;
+                      case "kyc.searchkyc.lite":
+                      formattedRouteName = "kyc/searchkyc_lite";
+                      break;
+                      case "kyc.pancard.new_info":
+                      formattedRouteName = "kyc/pancard_new_info";
+                      break;
+                      case "aadharExtract":
+                      formattedRouteName = "kyc/extract_aadharcard_text";
+                      break;
+                      case "pancardExtract":
+                      formattedRouteName = "kyc/extract_pancard_text";
+                      break;
+                      case "voterExtract":
+                      formattedRouteName = "kyc/extract_voterId_text";
+                      break;
+                      case "drivingLicenseExtract":
+                      formattedRouteName = "kyc/extract_drivinglicense_text";
+                      break;
+                      case "pancard_ocr":
+                      formattedRouteName = "kyc/pancard/ocr";
+                      break;
+                      case "aadharcard_mask":
+                      formattedRouteName = "kyc/aadhaar_masking";
+                      break;
+                      case "voter_ocr":
+                      formattedRouteName = "kyc/voterid/ocr";
+                      break;
+                      case "drivingLicense_ocr":
+                      formattedRouteName = "kyc/license/ocr";
+                      break;
+                      case "passport_ocr":
+                      formattedRouteName = "kyc/passport/ocr";
+                      break;
+                    
+                    default:
+                      formattedRouteName = menu.route_name.replace(/\./g, "/");
+                  }
                   return (
                     <Link to={formattedRouteName}>
                       <li
@@ -692,10 +752,15 @@ class Role0_Dashboard extends Component {
                 }`}
               >
                 {eSignMenus.map((menu, index) => {
-                  const formattedRouteName = menu.route_name.replace(
-                    /\./g,
-                    "/"
-                  );
+                  let formattedRouteName;
+
+                  switch (menu.route_name) {
+                    case "esign_docboyz":
+                      formattedRouteName = "kyc/esign-intialize";
+                      break;
+                    default:
+                      formattedRouteName = menu.route_name.replace(/\./g, "/");
+                  }
                   return (
                     <Link to={formattedRouteName}>
                       <li
@@ -730,10 +795,19 @@ class Role0_Dashboard extends Component {
                 }`}
               >
                 {videoKycmenus.map((menu, index) => {
-                  const formattedRouteName = menu.route_name.replace(
-                    /\./g,
-                    "/"
-                  );
+                  // const formattedRouteName = menu.route_name.replace(
+                  //   /\./g,
+                  //   "/"
+                  // );
+                  let formattedRouteName;
+
+                  switch (menu.route_name) {
+                    case "facematch":
+                      formattedRouteName = "kyc/facematch";
+                      break;
+                    default:
+                      formattedRouteName = menu.route_name.replace(/\./g, "/");
+                  }
                   return (
                     <Link to={formattedRouteName}>
                       <li
@@ -844,10 +918,31 @@ class Role0_Dashboard extends Component {
                 }`}
               >
                 {corporateMenus.map((menu, index) => {
-                  const formattedRouteName = menu.route_name.replace(
-                    /\./g,
-                    "/"
-                  );
+                  // const formattedRouteName = menu.route_name.replace(
+                  //   /\./g,
+                  //   "/"
+                  // );
+                  let formattedRouteName;
+
+                  switch (menu.route_name) {
+                    case "gstverification":
+                      formattedRouteName = "kyc/basic/gstin";
+                      break;
+                    case "corporate_cin_basic":
+                      formattedRouteName = "kyc/corporate/basic";
+                      break;
+
+                      case "corporate_cin_advance":
+                      formattedRouteName = "kyc/corporate/advanced";
+                      break;
+                      case "gstin_details":
+                      formattedRouteName = "kyc/gstin_details";
+                      break;
+                      
+                    
+                    default:
+                      formattedRouteName = menu.route_name.replace(/\./g, "/");
+                  }
                   return (
                     <Link to={formattedRouteName}>
                       <li
@@ -920,10 +1015,71 @@ class Role0_Dashboard extends Component {
                 }`}
               >
                 {otherMenus.map((menu, index) => {
-                  const formattedRouteName = menu.route_name.replace(
-                    /\./g,
-                    "/"
-                  );
+                  // const formattedRouteName = menu.route_name.replace(
+                  //   /\./g,
+                  //   "/"
+                  // );
+                  let formattedRouteName;
+
+                  switch (menu.route_name) {
+                    case "kyc.telecom_generate_otp":
+                      formattedRouteName = "kyc/telecom";
+                      break;
+                    case "other.equifax":
+                      formattedRouteName = "equifax";
+                      break;
+
+                      case "kyc.fssi_validation":
+                      formattedRouteName = "kyc/fssi";
+                      break;
+                      case "kyc.udyam.details":
+                      formattedRouteName = "kyc/udyam_details";
+                      break;
+                      case "kyc.udyog.details":
+                      formattedRouteName = "kyc/udyogadhar_details";
+                      break;
+                      case "kyc.ckycsearchdata.lite":
+                      formattedRouteName = "kyc/ckycsearchdata";
+                      break;
+                      case "kyc.ckycdownload.lite":
+                      formattedRouteName = "kyc/ckycdownload";
+                      break;
+                      case "verify_email":
+                      formattedRouteName = "kyc/verify_email";
+                      break;
+
+                      case "check_verification_email_status":
+                      formattedRouteName = "kyc/check_verify_email_status";
+                      break;
+
+                      case "land":
+                      formattedRouteName = "kyc/land";
+                      break;
+                      case "community_area":
+                      formattedRouteName = "kyc/community_area";
+                      break;
+                      case "detection_emotion":
+                      formattedRouteName = "kyc/detection_emotion";
+                      break;
+                      case "detection_face":
+                      formattedRouteName = "kyc/detection_face";
+                      break;
+                      case "pincode":
+                      formattedRouteName = "kyc/pincode";
+                      break;
+                      case "image_scanner":
+                      formattedRouteName = "kyc/img_scanner";
+                      break;
+                      case "aadharcard_ocr":
+                      formattedRouteName = "kyc/aadharcard/ocr";
+                      break;
+                      case "bypan":
+                      formattedRouteName = "kyc/by_pancard";
+                      break;
+                    
+                    default:
+                      formattedRouteName = menu.route_name.replace(/\./g, "/");
+                  }
                   return (
                     <Link to={formattedRouteName}>
                       <li
@@ -1001,6 +1157,7 @@ class Role0_Dashboard extends Component {
             <Route path="transactionList" element={<TransactionList />} />
             <Route path="api_docs" element={<ApiDocumentation />} />
             <Route path="report" element={<ReportList />} />
+            <Route path="get_report/:yearMonth/:userId" element={<BillReport />} />
             <Route path="adduser" element={<UserForm />} />
             <Route path="schemetypeList" element={<SchemeTypeMaster />} />
             <Route path="apiMaster" element={<ApiMaster />} />
@@ -1011,6 +1168,7 @@ class Role0_Dashboard extends Component {
             <Route path="edituser/:id" element={<EditUser />} />
             <Route path="setNewPassword/:id" element={<SetNewPassword />} />
             <Route path="resetPassword" element={<ResetPassword />} />
+            <Route path="pdf" element={<ReportPDF />} />
 
             <Route path="/" element={<PrepaidDashboard />} />
             <Route path="/userAdminWallet" element={<AdminUserWallet />} />
@@ -1037,12 +1195,17 @@ class Role0_Dashboard extends Component {
               path="/kyc/aadhar_ocr_masking"
               element={<AadharOCRMasking />}
             />
+            <Route
+              path="/kyc/extract_aadharcard_text"
+              element={<AadharExtract />}
+            />
 
             {/* VOTER */}
             <Route path="/kyc/voter_validation" element={<VoterValidation />} />
             <Route path="/kyc/voter_api" element={<VoterAPI />} />
             <Route path="/kyc/voter_upload" element={<VoterUpload />} />
             <Route path="/kyc/voterid/ocr" element={<VoterIDOCR />} />
+            <Route path="/kyc/extract_voterId_text" element={<VoterIdExtract />} />
 
             {/* PAN */}
             <Route path="/kyc/pancard" element={<PanCardVerification />} />
@@ -1053,6 +1216,7 @@ class Role0_Dashboard extends Component {
             <Route path="/kyc/pancard/ocr" element={<PanCardOCR />} />
             <Route path="/kyc/pantogst" element={<PanToGST />} />
             <Route path="/kyc/by_pancard" element={<ByPanCard />} />
+            <Route path="/kyc/extract_pancard_text" element={<PanCardExtract />} />
 
             {/* PASSPORT */}
             <Route
@@ -1135,7 +1299,12 @@ class Role0_Dashboard extends Component {
               path="/kyc/bank_statement"
               element={<BankStatementReader />}
             />
+            <Route
+              path="/kyc/bankstatement/reader"
+              element={<BankStatementReaderV1 />}
+            />
             <Route path="/kyc/bank_analyser" element={<BankAnalyser />} />
+            <Route path="/kyc/bankanalyser" element={<BankAnalyserV1 />} />
 
             {/* DL */}
             <Route
@@ -1145,15 +1314,25 @@ class Role0_Dashboard extends Component {
             <Route path="/kyc/license_api" element={<DrivingLicenseAPI />} />
             <Route path="/kyc/license_upload" element={<LicenseUpload />} />
             <Route path="/kyc/license/ocr" element={<LicenseOCR />} />
+            <Route path="/kyc/extract_drivinglicense_text" element={<LicenseExtract />} />
 
             {/* ITR */}
             <Route path="/itr/itr_initiate" element={<ITRInitiate />} />
-            <Route path="/itr/itr_enter_clientid" element={<ITREnterClientId />} />
+            <Route
+              path="/itr/itr_enter_clientid"
+              element={<ITREnterClientId />}
+            />
             <Route path="/itr/itr_download_profile" element={<ITRProfile />} />
             <Route path="/itr/itr_download" element={<ITRDownload />} />
-            <Route path="/itr/itr_download_26AS" element={<ITRDownload26AS />} />
+            <Route
+              path="/itr/itr_download_26AS"
+              element={<ITRDownload26AS />}
+            />
             <Route path="/itr/itr_submit_otp" element={<ITRSubmitOTP />} />
-            <Route path="/itr/itr_forget_password" element={<ITRForgetPassword />} />
+            <Route
+              path="/itr/itr_forget_password"
+              element={<ITRForgetPassword />}
+            />
 
             {/* VIDEO */}
             <Route path="/kyc/face_match" element={<FaceMatch />} />
@@ -1243,6 +1422,12 @@ class Role0_Dashboard extends Component {
             <Route path="/kyc/fssi" element={<Fssai />} />
             <Route path="/kyc/fssi_api" element={<FssaiApi />} />
             <Route path="/kyc/upi_validation" element={<Upivalidation />} />
+            <Route path="/kyc/telecom_submit_otp" element={<TelecomSubmitOtp />} />
+            <Route path="/kyc/usage" element={<Usage />} />
+            <Route path="/kyc/ckycsearchdata" element={<CkycSearch />} />
+            <Route path="/kyc/ckycsearch_api" element={<CkycSearchAPI />} />
+            <Route path="/kyc/ckycdownload" element={<CkycDownload />} />
+            <Route path="/kyc/ckycdownload_api" element={<CkycDownloadApi />} />
 
             {/* EPFO */}
             <Route
@@ -1289,8 +1474,6 @@ class Role0_Dashboard extends Component {
 
             {/* search api */}
             <Route path="/kyc/single/search/api" element={<AllInOneApi />} />
-
-            
           </Routes>
         </div>
         {/* useradmin */}
@@ -1488,34 +1671,11 @@ class Role0_Dashboard extends Component {
         </div>
         <ToastContainer />
       </div>
-
-        
     );
   }
 }
 
 export default withRouter(Role0_Dashboard);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // <div
 //           className={`flex flex-col fixed right-0 bg-white shadow-lg rounded-lg ${
@@ -1538,7 +1698,6 @@ export default withRouter(Role0_Dashboard);
 //             </button>
 //           </div>
 
-          
 //           {isAdmin ? (
 //             <div className="p-4 mt-4 mx-8 mb-4 border-2 rounded-md border-[#00acc1] text-black shadow-lg bg-[#f9f9f9]">
 //               <h1 className="text-3xl text-[#00acc1] w-fit mx-auto mb-4">

@@ -129,6 +129,14 @@ import FaceDetectionRegTech from "../SingleSearchComponent/FaceDetection";
 import FaceMatchRegtech from "../SingleSearchComponent/FaceMatchV1";
 import DetectionEmotion from "../SingleSearchComponent/DetectionEmotin";
 import PredictPPL from "../SingleSearchComponent/PredictPPl";
+import EquifaxScore from "../SingleSearchComponent/EquifaxScore";
+import Equifax from "../SingleSearchComponent/Equifax";
+import AadharExtract from "../SingleSearchComponent/AadharExtract";
+import LicenseExtract from "../SingleSearchComponent/LicenseExtract";
+import PanCardExtract from "../SingleSearchComponent/PancardExtract";
+import VoterIdExtract from "../SingleSearchComponent/VoterIdExtract";
+import BankAnalyserV1 from "../SingleSearchComponent/BankStatementAnalyserv1";
+import BankStatementReaderV1 from "../SingleSearchComponent/BankStatementReaderV1";
 
 // Custom dropdown component
 const Dropdown = ({ options, onChange, value }) => {
@@ -361,10 +369,10 @@ const SingleSearch = () => {
         return <DedupeS3 />;
 
       case "Score":
-        return <Score />;
+        return <EquifaxScore />;
 
       case "Ecredit":
-        return <Ecredit />;
+        return <Equifax />;
 
       case "Email Verify":
         return <EmailVerification />;
@@ -478,19 +486,19 @@ const SingleSearch = () => {
         return <DetectionEmotion />;
 
       case "Extract Aadhar":
-        return <ExtractAadhar />;
+        return <AadharExtract />;
 
       case "Extract Driving License":
-        return <ExtractDrivingLicense />;
+        return <LicenseExtract />;
 
       case "Extract Pan Card":
-        return <ExtractPanCard />;
+        return <PanCardExtract />;
 
       case "Extract VoterId":
-        return <ExtractVoterId />;
+        return <VoterIdExtract />;
 
       case "Bank Statement Analyser v1":
-        return <BankStatementAnalyserV1 />;
+        return <BankAnalyserV1 />;
 
       case "Bank Statement Reader v1":
         return <BankStatementReaderV1 />;

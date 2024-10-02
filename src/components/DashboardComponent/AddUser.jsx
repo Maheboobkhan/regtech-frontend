@@ -36,7 +36,7 @@ class UserForm extends Component {
 
       // selectedPlanType: 'Nothing Selected',
       apiPlanInputs: [""],
-      customPlanInputs: [""],
+      // customPlanInputs: [""],
       checkedOptions: {},
       enabledInputs: {},
       allCheckedGroups: {},
@@ -46,6 +46,7 @@ class UserForm extends Component {
       inputData: {},
       getPlan: "",
       user: {},
+      planDurationInMonths: "",
     };
   }
 
@@ -61,8 +62,9 @@ class UserForm extends Component {
   }
 
   fetchSchemeTypes = async () => {
+    const domain = localStorage.getItem("domain");
     try {
-      const response = await fetch("http://localhost:8000/api/scheme_types");
+      const response = await fetch(`${domain}/scheme_types`);
       const data = await response.json();
       this.setState({ selectScheme: data.scheme_types });
     } catch (error) {
@@ -71,12 +73,11 @@ class UserForm extends Component {
   };
 
   fetchApiGroups = async (token) => {
+    const domain = localStorage.getItem("domain");
     console.log(token);
 
     try {
-      const response = await fetch(
-        `http://localhost:8000/api/apigroup/${token}`
-      );
+      const response = await fetch(`${domain}/apigroup/${token}`);
       const data = await response.json();
       console.log("apigroups: ", data);
       this.setState({ apiGroups: data.api_group || [] }, () => {
@@ -90,10 +91,9 @@ class UserForm extends Component {
   };
 
   fetchApiOptions = async (token) => {
+    const domain = localStorage.getItem("domain");
     try {
-      const response = await fetch(
-        `http://localhost:8000/api/apimaster/${token}`
-      );
+      const response = await fetch(`${domain}/apimaster/${token}`);
       const data = await response.json();
       console.log("options: ", data);
       this.setState({ apiOptions: data });
@@ -117,98 +117,21 @@ class UserForm extends Component {
         [optionId]: planType,
       },
     }));
+
+    console.log(this.state.selectedPlanTypes)
   };
 
-  handleCustomInputChange = (optionId, index, value) => {
-    this.setState((prevState) => ({
-      customPlanInputs: {
-        ...prevState.customPlanInputs,
-        [optionId]: prevState.customPlanInputs[optionId].map((input, i) =>
-          i === index ? value : input
-        ),
-      },
-    }));
-  };
-
-  // handleAddCustomInput = (optionId) => {
-  //   this.setState((prevState) => ({
-  //     customInputs: {
-  //       ...prevState.customInputs,
-  //       [optionId]: [
-  //         ...(prevState.customInputs[optionId] || []),
-  //         { from: "", to: "", price: "" },
-  //       ],
-  //     },
-  //   }));
-  // };
-
-  // handleRemoveCustomInput = (optionId, index) => {
-  //   this.setState((prevState) => ({
-  //     customInputs: {
-  //       ...prevState.customInputs,
-  //       [optionId]: prevState.customInputs[optionId].filter(
-  //         (_, i) => i !== index
-  //       ),
-  //     },
-  //   }));
-  // };
-
-  // handleCustomInputChange = (optionId, index, field, value) => {
+  // handleCustomInputChange = (optionId, index, value) => {
   //   this.setState((prevState) => ({
   //     customPlanInputs: {
   //       ...prevState.customPlanInputs,
   //       [optionId]: prevState.customPlanInputs[optionId].map((input, i) =>
-  //         i === index ? { ...input, [field]: value } : input
+  //         i === index ? value : input
   //       ),
   //     },
   //   }));
   // };
 
-  // handleAddCustomInput = (optionId) => {
-  //   const newInputId = (this.state.customPlanInputs[optionId]?.length || 0) + 1; // Incremental ID
-  //   this.setState((prevState) => ({
-  //     customPlanInputs: {
-  //       ...prevState.customPlanInputs,
-  //       [optionId]: [
-  //         ...(prevState.customPlanInputs[optionId] || []),
-  //         { id: newInputId, from: "", to: "", price: "" }, // New input object
-  //       ],
-  //     },
-  //   }));
-  // };
-  // handleCustomInputChange = (groupId, optionId, index, field, value) => {
-  //   console.log(groupId, optionId, index, field, value);
-  //   this.setState((prevState) => ({
-  //     customPlanInputs: {
-  //       ...prevState.customPlanInputs,
-  //       [optionId]: prevState.customPlanInputs[optionId]?.map((input, i) =>
-  //         i === index ? { ...input, [field]: value } : input
-  //       ),
-  //     },
-  //   }));
-  // };
-
-  // handleAddCustomInput = (optionId) => {
-  //   const newInputId = (this.state.customPlanInputs[optionId]?.length || 0) + 1; // Incremental ID
-  //   this.setState((prevState) => ({
-  //     customPlanInputs: {
-  //       ...prevState.customPlanInputs,
-  //       [optionId]: [
-  //         ...(prevState.customPlanInputs[optionId] || []),
-  //         { id: newInputId, from: "", to: "", price: "" }, // New input object
-  //       ],
-  //     },
-  //   }));
-  // };
-
-  // handleRemoveCustomInput = (optionId, index) => {
-  //   this.setState((prevState) => ({
-  //     customPlanInputs: {
-  //       ...prevState.customPlanInputs,
-  //       [optionId]: prevState.customPlanInputs[optionId].filter((_, i) => i !== index), // Remove input at the given index
-  //     },
-  //   }));
-  // };
   handleCustomInputChange = (groupId, optionId, index, field, value) => {
     console.log(groupId, optionId, index, field, value);
     this.setState((prevState) => ({
@@ -231,7 +154,11 @@ class UserForm extends Component {
           { id: newInputId, groupId, from: "", to: "", price: "" },
         ],
       },
+
+      
     }));
+
+    console.log('customPlanInputs: ',this.state.customPlanInputs);
   };
 
   handleRemoveCustomInput = (optionId, index) => {
@@ -245,32 +172,8 @@ class UserForm extends Component {
     }));
   };
 
-  // handleSubmitt = () => {
-  //   const { customPlanInputs } = this.state;
-  //   console.log(customPlanInputs);
-
-  //   let idDataArray = [];
-
-  //   for (const [optionId, inputs] of Object.entries(customPlanInputs)) {
-  //     const prices = inputs.map(input => input.price).join(",");
-  //     const fromValues = inputs.map(input => input.from).join(",");
-  //     const groupId = inputs.map(input => input.groupId).join(",");
-  //     const toValues = inputs.map(input => input.to).join(",");
-
-  //     // Constructing the data for the current optionId
-  //     const idData = `${optionId}|${prices}|${groupId}|${toValues}`;
-  //     idDataArray.push(idData);
-  //   }
-
-  //   const dataToPost = `ids=${idDataArray.join("/")}`;
-
-  //   console.log(dataToPost); // Check the data structure in the console
-
-  // };
-
   handleSubmitt = () => {
     const { customPlanInputs } = this.state;
-    console.log(customPlanInputs);
 
     let idDataArray = [];
 
@@ -327,6 +230,7 @@ class UserForm extends Component {
   };
 
   handlePlanChange = (e) => {
+    let planDur = "";
     this.setState({ getPlan: e.target.value });
     const selectedPlan = e.target.value;
     this.setState((prevState) => {
@@ -336,6 +240,20 @@ class UserForm extends Component {
       endDate.setDate(today.getDate() + (planDetails.duration || 0));
       const formattedEndDate = endDate.toISOString().split("T")[0];
       const formattedStartDate = today.toISOString().split("T")[0];
+      planDur = `${formattedStartDate} to ${formattedEndDate}`;
+      console.log(planDur);
+      const [startDateStr, endDateStr] = planDur.split(" to ");
+
+      // Convert the strings to Date objects
+      const startDatePlan = new Date(startDateStr);
+      console.log(startDatePlan);
+      const endDatePlan = new Date(endDateStr);
+
+      // Calculate the difference in months
+      const diffInMonths =
+        (endDatePlan.getFullYear() - startDatePlan.getFullYear()) * 12 +
+        (endDatePlan.getMonth() - startDatePlan.getMonth());
+      this.setState({ planDurationInMonths: diffInMonths });
       return {
         plan: selectedPlan,
         planAmount: planDetails.amount || "",
@@ -394,17 +312,6 @@ class UserForm extends Component {
     }));
   };
 
-  // Handle change in the second input field
-  // handleInputChange = (optionId, groupId, event) => {
-  //     const newValue = event.target.value;
-  //     this.setState(prevState => ({
-  //         inputValues: {
-  //             ...prevState.inputValues,
-  //             [optionId]: newValue
-  //         }
-  //     }));
-  // };
-
   handleInputChange = (optionId, groupId, event) => {
     const newValue = event.target.value;
 
@@ -435,6 +342,7 @@ class UserForm extends Component {
         [optionId]: planType,
       },
     }));
+    console.log(this.state.selectedPlanTypes)
   };
 
   addInput = () => {
@@ -474,81 +382,12 @@ class UserForm extends Component {
       enabledInputs,
       inputValues,
       user,
+      planDurationInMonths,
     } = this.state;
 
     // for custom
     const { customPlanInputs } = this.state;
     console.log(customPlanInputs);
-
-    // let idDataArray = [];
-
-    // for (const [optionId, inputs] of Object.entries(customPlanInputs)) {
-    //   // Filter out inputs where price is not empty
-    //   const validInputs = inputs.filter(input => input.price);
-
-    //   if (validInputs.length > 0) {
-    //     const prices = validInputs.map(input => input.price).join(",");
-    //     const fromValues = validInputs.map(input => input.from).join(",");
-    //     const groupId = validInputs[0].groupId; // Get groupId from the first valid input
-    //     const toValues = validInputs.map(input => input.to).join(",");
-
-    //     // Constructing the data for the current optionId
-    //     const idData = `${optionId}|${prices}|${groupId}|${toValues}|${
-    //       schemaType === "demo" ? "no" : schemaType === "production" && selectedPlanTypes[optionId] === 'Custom plan' ? 'yes' : 'no'
-    //     }|${this.state.getPlan}/`;
-    //     idDataArray.push(idData);
-    //   }
-    // }
-
-    // const dataToPost = `ids=${idDataArray.join("/")}`;
-
-    // const ids = Object.values(inputData)
-    //   .map((item) => {
-    //     const demoPrice = item.value;
-    //     const apiId = item.optionId;
-    //     const groupId = item.groupId;
-    //     return `${apiId}|${demoPrice}|${groupId}|${
-    //       schemaType === "demo" ? "no" : "no"
-    //     }|${this.state.getPlan}/null/`;
-    //   })
-    //   .join("");
-
-    // const formData = {
-    //   ids,
-    //   scheme_type: schemaType,
-    //   ...(schemaType === "demo" ? { scheme_type_id: scheme } : {}),
-    //   name: fullName,
-    //   email: email,
-    //   menu_ids: permissions,
-    //   password,
-    //   cpassword: confirmPassword,
-    //   rdo: billingType === "Prepaid" ? "role_prepaid" : "role_postpaid",
-    //   one_time_comission: otc,
-    // };
-
-    // const authToken = Cookies.get("authToken");
-
-    // const headers = {
-    //   Authorization: `Bearer ${authToken}`,
-    // };
-
-    // // Send the POST request with Axios
-    // try {
-    //   const response = await axios.post(
-    //     "http://localhost:8000/api/usercreate",
-    //     this.state.selectedPlanTypes === 'Custom plan' ? formDataForCustom : formData,
-    //     { headers }
-    //   );
-    //   console.log(response);
-    //   if (response.status === 200) {
-    //     toast.success("User Added Successfully!");
-    //     setTimeout(() => {
-    //       this.props.navigate("/dashboard/users");
-    //     }, 2000);
-    //   }
-    // } catch (error) {
-    //   console.log("Error: ", error);
-    // }
 
     let idDataArray = [];
 
@@ -586,7 +425,7 @@ class UserForm extends Component {
 
     // Combine both results
     const ids = `${idDataArray.join("")}${normalIds}`;
-    console.log('ids: ', ids);
+    console.log("ids: ", ids);
 
     const formData = {
       ids,
@@ -609,11 +448,10 @@ class UserForm extends Component {
 
     // Send the POST request with Axios
     try {
-      const response = await axios.post(
-        "http://localhost:8000/api/usercreate",
-        formData,
-        { headers }
-      );
+      const domain = localStorage.getItem("domain");
+      const response = await axios.post(`${domain}/usercreate`, formData, {
+        headers,
+      });
       console.log(response);
       if (response.status === 200) {
         toast.success("User Added Successfully!");
@@ -873,7 +711,7 @@ class UserForm extends Component {
           </div>
           <div className="flex-1">
             <label className="block text-gray-700 font-bold mb-2">
-              Plan Duration
+              Plan Duration: {this.state.planDurationInMonths} month(s)
             </label>
             <input
               type="text"
@@ -901,8 +739,8 @@ class UserForm extends Component {
         {schemaType === "demo" && (
           <div className="mb-6">
             {apiGroups.map((group) => (
-              <div key={group.id} className="mb-6">
-                <label className="block text-gray-700 font-bold mb-2 flex items-center">
+              <div key={group.id} className="border-[1px] border-black p-8 my-10 mb-6">
+                <label className="block text-xl font-bold mb-2 flex items-center text-red-500">
                   <input
                     type="checkbox"
                     name={group.group_name}
@@ -919,7 +757,7 @@ class UserForm extends Component {
                   .map((option) => (
                     <div
                       key={option.id}
-                      className="md:flex md:flex-row flex-col justify-between items-center mb-4"
+                      className="md:flex md:flex-row flex-col justify-between items-center mb-4 border-[1px] border-pink-500 p-2"
                     >
                       <div>
                         <input
@@ -981,8 +819,8 @@ class UserForm extends Component {
         {schemaType === "production" && (
           <div className="mb-6">
             {apiGroups.map((group) => (
-              <div key={group.id}>
-                <label className="block text-gray-700 font-bold mb-2 flex items-center">
+              <div key={group.id} className="border-[1px] border-black p-8 my-10">
+                <label className="block text-xl font-bold mb-2 flex items-center text-red-500">
                   <input
                     type="checkbox"
                     name={group.group_name}
@@ -999,7 +837,7 @@ class UserForm extends Component {
                   .map((option) => (
                     <div
                       key={option.id}
-                      className="md:flex md:flex-row md:justify-between flex-col"
+                      className="md:flex md:flex-row md:justify-between flex-col mb-4 border-[1px] border-pink-500 p-2"
                     >
                       <div>
                         <input
@@ -1041,24 +879,6 @@ class UserForm extends Component {
                           </select>
                         </div>
 
-                        {/* {this.state.selectedPlanTypes !== 'API plan' && (
-                                            <div className="flex space-x-4">
-                                                <input
-                                                    type="text"
-                                                    value="10"
-                                                    readOnly
-                                                    className="p-2 border w-1/2 border-gray-300 rounded bg-gray-100"
-                                                />
-                                                <input
-                                                    type="text"
-                                                    value={this.state.inputValues[option.id] || ''}
-                                                    onChange={(e) => this.handleInputChange(option.id, e)}
-                                                    disabled={!this.state.enabledInputs[option.id]}
-                                                    className="p-2 border w-1/2 border-gray-300 rounded"
-                                                />
-                                            </div>
-                                        )} */}
-
                         {this.state.selectedPlanTypes[option.id] !==
                           "Custom plan" && (
                           <div className="flex space-x-4">
@@ -1085,321 +905,6 @@ class UserForm extends Component {
                           </div>
                         )}
 
-                        {/* {this.state.selectedPlanTypes[option.id] ===
-                          "Custom plan" && (
-                          <div>
-                            {customPlanInputs[option.id]?.map((input, index) => (
-                            <div className="flex ml-4 gap-x-3 gap-y-2 items-center mb-2">
-                              <input
-                                placeholder="range from"
-                                type="text"
-                                value=""
-                                onChange={(e) =>
-                                  this.handleCustomInputChange(
-                                    option.id,
-                                    index,
-                                    e.target.value
-                                  )
-                                }
-                                className="py-1 px-2 border border-gray-300 rounded w-1/4"
-                              />
-                              <input
-                                placeholder="range upto"
-                                type="text"
-                                value=""
-                                onChange={(e) =>
-                                  this.handleCustomInputChange(
-                                    option.id,
-                                    index,
-                                    e.target.value
-                                  )
-                                }
-                                className="py-1 px-2 border border-gray-300 rounded w-1/4"
-                              />
-                              <input
-                                placeholder="Rs. "
-                                type="text"
-                                value=""
-                                onChange={(e) =>
-                                  this.handleCustomInputChange(
-                                    option.id,
-                                    index,
-                                    e.target.value
-                                  )
-                                }
-                                className="py-1 px-2 border border-gray-300 rounded w-1/4"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => this.addCustomInput(option.id)}
-                                className="bg-blue-500 text-white px-4 rounded-lg"
-                              >
-                                +
-                              </button>
-                            </div>
-                            ))}
-                          </div>
-                        )} */}
-
-                        {/* {this.state.selectedPlanTypes[option.id] ===
-                          "Custom plan" && (
-                          <div>
-                            {this.state.customPlanInputs[option.id]?.length >
-                            0 ? (
-                              this.state.customPlanInputs[option.id].map(
-                                (inputValue, index) => (
-                                  <div
-                                    key={inputValue.id}
-                                    className="flex ml-4 gap-x-3 gap-y-2 items-center mb-2"
-                                  >
-                                    <input
-                                      placeholder="range from"
-                                      type="text"
-                                      value={inputValue.from}
-                                      onChange={(e) =>
-                                        this.handleCustomInputChange(
-                                          option.id,
-                                          index,
-                                          "from",
-                                          e.target.value
-                                        )
-                                      }
-                                      className="py-1 px-2 border border-gray-300 rounded w-1/4"
-                                    />
-                                    <input
-                                      placeholder="range upto"
-                                      type="text"
-                                      value={inputValue.to}
-                                      onChange={(e) =>
-                                        this.handleCustomInputChange(
-                                          option.id,
-                                          index,
-                                          "to",
-                                          e.target.value
-                                        )
-                                      }
-                                      className="py-1 px-2 border border-gray-300 rounded w-1/4"
-                                    />
-                                    <input
-                                      placeholder="Rs."
-                                      type="text"
-                                      value={inputValue.price}
-                                      onChange={(e) =>
-                                        this.handleCustomInputChange(
-                                          option.id,
-                                          index,
-                                          "price",
-                                          e.target.value
-                                        )
-                                      }
-                                      className="py-1 px-2 border border-gray-300 rounded w-1/4"
-                                    />
-                                    <button
-                                      type="button"
-                                      onClick={() =>
-                                        this.handleAddCustomInput(option.id)
-                                      }
-                                      className="bg-blue-500 text-white px-4 rounded-lg"
-                                    >
-                                      +
-                                    </button>
-                                  </div>
-                                )
-                              )
-                            ) : (
-                              <div className="flex ml-4 gap-x-3 gap-y-2 items-center mb-2">
-                                <input
-                                  placeholder="range from"
-                                  type="text"
-                                  value=""
-                                  onChange={(e) =>
-                                    this.handleCustomInputChange(
-                                      option.id,
-                                      0,
-                                      "from",
-                                      e.target.value
-                                    )
-                                  }
-                                  className="py-1 px-2 border border-gray-300 rounded w-1/4"
-                                />
-                                <input
-                                  placeholder="range upto"
-                                  type="text"
-                                  value=""
-                                  onChange={(e) =>
-                                    this.handleCustomInputChange(
-                                      option.id,
-                                      0,
-                                      "to",
-                                      e.target.value
-                                    )
-                                  }
-                                  className="py-1 px-2 border border-gray-300 rounded w-1/4"
-                                />
-                                <input
-                                  placeholder="Rs."
-                                  type="text"
-                                  value=""
-                                  onChange={(e) =>
-                                    this.handleCustomInputChange(
-                                      option.id,
-                                      0,
-                                      "price",
-                                      e.target.value
-                                    )
-                                  }
-                                  className="py-1 px-2 border border-gray-300 rounded w-1/4"
-                                />
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    this.handleAddCustomInput(option.id)
-                                  }
-                                  className="bg-blue-500 text-white px-4 rounded-lg"
-                                >
-                                  +
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        )} */}
-                        {/* {this.state.selectedPlanTypes[option.id] ===
-                          "Custom plan" && (
-                          <div>
-                            {this.state.customPlanInputs[option.id]?.length >
-                            0 ? (
-                              this.state.customPlanInputs[option.id].map(
-                                (inputValue, index) => (
-                                  <div
-                                    key={inputValue.id}
-                                    className="flex ml-4 gap-x-3 gap-y-2 items-center mb-2"
-                                  >
-                                    <input
-                                      placeholder="range from"
-                                      type="text"
-                                      value={inputValue.from}
-                                      onChange={(e) =>
-                                        this.handleCustomInputChange(
-                                          group.id,
-                                          option.id,
-                                          index,
-                                          "from",
-                                          e.target.value
-                                        )
-                                      }
-                                      className="py-1 px-2 border border-gray-300 rounded w-1/4"
-                                    />
-                                    <input
-                                      placeholder="range upto"
-                                      type="text"
-                                      value={inputValue.to}
-                                      onChange={(e) =>
-                                        this.handleCustomInputChange(
-                                          group.id,
-                                          option.id,
-                                          index,
-                                          "to",
-                                          e.target.value
-                                        )
-                                      }
-                                      className="py-1 px-2 border border-gray-300 rounded w-1/4"
-                                    />
-                                    <input
-                                      placeholder="Rs."
-                                      type="text"
-                                      value={inputValue.price}
-                                      onChange={(e) =>
-                                        this.handleCustomInputChange(
-                                          group.id,
-                                          option.id,
-                                          index,
-                                          "price",
-                                          e.target.value
-                                        )
-                                      }
-                                      className="py-1 px-2 border border-gray-300 rounded w-1/4"
-                                    />
-                                    <button
-                                      type="button"
-                                      onClick={() =>
-                                        this.handleRemoveCustomInput(
-                                          option.id,
-                                          index
-                                        )
-                                      }
-                                      className="bg-red-500 text-white px-4 rounded-lg"
-                                    >
-                                      -
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={() =>
-                                        this.handleAddCustomInput(option.id)
-                                      }
-                                      className="bg-blue-500 text-white px-4 rounded-lg"
-                                    >
-                                      +
-                                    </button>
-                                  </div>
-                                )
-                              )
-                            ) : (
-                              <div className="flex ml-4 gap-x-3 gap-y-2 items-center mb-2">
-                                <input
-                                  placeholder="range from"
-                                  type="text"
-                                  value=""
-                                  onChange={(e) =>
-                                    this.handleCustomInputChange(
-                                      option.id,
-                                      0,
-                                      "from",
-                                      e.target.value
-                                    )
-                                  }
-                                  className="py-1 px-2 border border-gray-300 rounded w-1/4"
-                                />
-                                <input
-                                  placeholder="range upto"
-                                  type="text"
-                                  value=""
-                                  onChange={(e) =>
-                                    this.handleCustomInputChange(
-                                      option.id,
-                                      0,
-                                      "to",
-                                      e.target.value
-                                    )
-                                  }
-                                  className="py-1 px-2 border border-gray-300 rounded w-1/4"
-                                />
-                                <input
-                                  placeholder="Rs."
-                                  type="text"
-                                  value=""
-                                  onChange={(e) =>
-                                    this.handleCustomInputChange(
-                                      option.id,
-                                      0,
-                                      "price",
-                                      e.target.value
-                                    )
-                                  }
-                                  className="py-1 px-2 border border-gray-300 rounded w-1/4"
-                                />
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    this.handleAddCustomInput(option.id)
-                                  }
-                                  className="bg-blue-500 text-white px-4 rounded-lg"
-                                >
-                                  +
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        )} */}
                         {this.state.selectedPlanTypes[option.id] ===
                           "Custom plan" && (
                           <div>
@@ -1489,6 +994,7 @@ class UserForm extends Component {
                                   placeholder="range from"
                                   type="text"
                                   value=""
+                                  disabled={true}
                                   onChange={(e) =>
                                     this.handleCustomInputChange(
                                       group.id,
@@ -1504,6 +1010,7 @@ class UserForm extends Component {
                                   placeholder="range upto"
                                   type="text"
                                   value=""
+                                  disabled={true}
                                   onChange={(e) =>
                                     this.handleCustomInputChange(
                                       group.id,
@@ -1519,6 +1026,7 @@ class UserForm extends Component {
                                   placeholder="Rs."
                                   type="text"
                                   value=""
+                                  disabled={true}
                                   onChange={(e) =>
                                     this.handleCustomInputChange(
                                       group.id,
@@ -1538,19 +1046,12 @@ class UserForm extends Component {
                                       option.id
                                     )
                                   }
-                                  className="bg-blue-500 text-white px-4 rounded-lg"
+                                  className="bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded-lg"
                                 >
-                                  +
+                                  Enable
                                 </button>
                               </div>
                             )}
-                            {/* <button
-                              type="button"
-                              onClick={this.handleSubmitt}
-                              className="bg-green-500 text-white px-4 rounded-lg mt-4"
-                            >
-                              Submit
-                            </button> */}
                           </div>
                         )}
                       </div>
@@ -1562,7 +1063,6 @@ class UserForm extends Component {
               type="button"
               className="bg-blue-500 text-white px-4 py-2 rounded"
               onClick={this.handleSubmit}
-              // onClick={this.handleSubmitt}
             >
               Add User
             </button>
@@ -1580,131 +1080,3 @@ export default function AddUserWithNavigate(props) {
   const navigate = useNavigate();
   return <UserForm {...props} navigate={navigate} />;
 }
-
-// {schemaType === 'Production' && (
-//     <div className="mb-6">
-//         {apiGroups.map(group => (
-//             <div key={group.id}>
-//                 <label className="block text-gray-700 font-bold mb-2 flex items-start">
-//                     <input
-//                         id={group.id}
-//                         type="checkbox"
-//                         name={group.group_name}
-//                         checked={this.state.checkedOptions[group.id] || false}
-//                         onChange={(e) => this.handleSelectAllMKYCDocs(group.id, e.target.checked)}
-//                         className="mr-2"
-//                     />
-//                     {group.group_name}
-//                 </label>
-//                 {apiOptions[group.id] && apiOptions[group.id].map(option => (
-//                     <div key={option.id} className="md:flex md:flex-row flex-col">
-//                         <div className='w-1/2'>
-//                             <input
-//                                 type="checkbox"
-//                                 name={option.api_name}
-//                                 id={`apiOptions-${option.id}`}
-//                                 checked={this.state.checkedOptions[option.id] || false}
-//                                 onChange={(e) => this.handleApiOptionChange(option.id, e.target.checked)}
-//                                 className="mr-2"
-//                             />
-//                             <label className="text-gray-700 mr-4">{option.api_name}</label>
-//                         </div>
-
-//                         <div className="">
-//                             <select
-//                                 id={option.id}
-//                                 name={selectedPlanType}
-//                                 value={this.state.selectedPlanTypes[option.id] || 'Nothing Selected'}
-//                                 onChange={(e) => this.handlePlanTypeChange(option.id, e)}
-//                                 className="flex-1 p-2 border cursor-pointer border-gray-300 rounded"
-//                             >
-//                                 <option value="Nothing Selected">Nothing Selected</option>
-//                                 <option value="API plan">API Plan</option>
-//                                 <option value="Custom plan">Custom Plan</option>
-//                             </select>
-//                         </div>
-
-//                         {this.state.selectedPlanTypes[option.id] === 'Nothing Selected' && (
-//                             <div className="flex space-x-4">
-//                                 <input
-//                                     type="text"
-//                                     value="10"
-//                                     readOnly
-//                                     className="p-2 border w-1/2 border-gray-300 rounded bg-gray-100"
-//                                 />
-//                                 <input
-//                                     type="text"
-//                                     value={this.state.inputValues[option.id] || ''}
-//                                     onChange={(e) => this.handleInputChange(option.id, e)}
-//                                     disabled={!this.state.enabledInputs[option.id]}
-//                                     className="p-2 border w-1/2 border-gray-300 rounded"
-//                                 />
-//                             </div>
-//                         )}
-
-//                         {this.state.selectedPlanTypes[option.id] === 'API plan' && (
-//                             <div className="flex space-x-4">
-//                                 <input
-//                                     type="text"
-//                                     value="10"
-//                                     readOnly
-//                                     className="p-2 border w-1/2 border-gray-300 rounded bg-gray-100"
-//                                 />
-//                                 <input
-//                                     type="text"
-//                                     value={this.state.inputValues[option.id] || ''}
-//                                     onChange={(e) => this.handleInputChange(option.id, e)}
-//                                     disabled={!this.state.enabledInputs[option.id]}
-//                                     className="p-2 border w-1/2 border-gray-300 rounded"
-//                                 />
-//                             </div>
-//                         )}
-
-//                         {this.state.selectedPlanTypes[option.id] === 'Custom plan' && (
-//                             <div>
-//                                 {/* {customPlanInputs[option.id]?.map((input, index) => ( */}
-//                                 <div className="flex ml-4 gap-x-3 gap-y-2 items-center mb-2">
-//                                     <input
-//                                         placeholder='range from'
-//                                         type="text"
-//                                         value=''
-//                                         onChange={(e) => this.handleCustomInputChange(option.id, index, e.target.value)}
-//                                         className="py-1 px-2 border border-gray-300 rounded w-1/4"
-//                                     />
-//                                     <input
-//                                         placeholder='range upto'
-//                                         type="text"
-//                                         value=''
-//                                         onChange={(e) => this.handleCustomInputChange(option.id, index, e.target.value)}
-//                                         className="py-1 px-2 border border-gray-300 rounded w-1/4"
-//                                     />
-//                                     <input
-//                                         placeholder='Rs. '
-//                                         type="text"
-//                                         value=''
-//                                         onChange={(e) => this.handleCustomInputChange(option.id, index, e.target.value)}
-//                                         className="py-1 px-2 border border-gray-300 rounded w-1/4"
-//                                     />
-//                                     <button
-//                                         type="button"
-//                                         onClick={() => this.addCustomInput(option.id)}
-//                                         className="bg-blue-500 text-white px-4 rounded-lg"
-//                                     >
-//                                         +
-//                                     </button>
-//                                 </div>
-//                                 {/* ))} */}
-//                             </div>
-//                         )}
-//                     </div>
-//                 ))}
-//             </div>
-//         ))}
-//         <button
-//             type="button"
-//             className="bg-blue-500 text-white px-4 py-2 rounded"
-//         >
-//             Add User
-//         </button>
-//     </div>
-// )}

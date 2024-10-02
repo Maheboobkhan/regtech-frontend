@@ -32,7 +32,7 @@ const SearchKyc = () => {
         'Content-Type': 'application/json',
       };
 
-      const res = await axios.post('http://regtechapi.in/api/ckycSearchfull', {
+      const res = await axios.post('http://regtechapi.in/api/search', {
         pano: formData.pan_number,
         dob: formData.dob
       }, { headers });

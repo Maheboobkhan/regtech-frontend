@@ -20,10 +20,11 @@ const ITRInitiate = () => {
     e.preventDefault();
     setLoading(true);
     const token = Cookies.get('authToken');
+    const domain = localStorage.getItem('domain');
 
     try {
       const res = await axios.post(
-        'http://localhost:8000/api/itrinitiate',
+        `${domain}/itrinitiate`,
         formData,
         { headers: { AccessToken: token } }
       );

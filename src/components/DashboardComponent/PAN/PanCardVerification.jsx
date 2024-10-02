@@ -36,6 +36,7 @@ const PanCardVerification = () => {
           },
         }
       );
+      console.log(data)
       setResponse(data);
     } catch (err) {
       setError(err.response ? err.response.data.message : 'Error processing request');
@@ -100,6 +101,11 @@ const PanCardVerification = () => {
                 <p><strong>PAN no:</strong> {response.pancard?.data?.pan_number || 'null'}</p>
                 <p><strong>Category:</strong> {response.pancard?.data?.category || 'null'}</p>
               </div>
+            </div>
+          )}
+          {response && response.statusCode === 500 && (
+            <div className="mt-6 bg-red-500 text-white p-4 rounded">
+              {response.message}
             </div>
           )}
         </div>

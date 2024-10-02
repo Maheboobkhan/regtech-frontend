@@ -25,7 +25,7 @@ const RCFullValidation = () => {
         { headers: { 'AccessToken': token } }
       );
 
-      console.log(res.data.rc_validation);
+      console.log(res);
       setResponse(res.data.rc_validation); // Set the RC validation data to state
     } catch (err) {
       setError(err.response ? err.response.data : 'An error occurred. Please try again later.');

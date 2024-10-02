@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import BankStatementReaderPDF from '../BANK/BankStatementReaderPdf';
+import { pdf } from '@react-pdf/renderer';
 
 const BankStatementReader = () => {
   const [file, setFile] = useState(null);
@@ -41,14 +43,29 @@ const BankStatementReader = () => {
       };
 
       const formData = new FormData();
-      formData.append('bankStmtpdf', file);
+      formData.append('bank_stmt', file);
       formData.append('password1', password);
-      formData.append('bnk_name', bank);
-      formData.append('Account_Type', accountType);
+      formData.append('bank_name', bank);
+      formData.append('account_type', accountType);
 
       const res = await axios.post('http://regtechapi.in/api/seachv4', formData, { headers });
       console.log(res)
       setResponse(res.data);
+      if (res.data && res.data.statusCode === 200) {
+        // const pdfBlob = new Blob([<PdfDocument data={res.data} />], { type: 'application/pdf' });
+        // const pdfUrl = URL.createObjectURL(pdfBlob);
+        // const pdfWindow = window.open(pdfUrl);
+        // if (pdfWindow) {
+        //   pdfWindow.focus();
+        // }
+        const blob = await pdf(
+          <BankStatementReaderPDF
+          bankStatement={res.data.bank_statement.transactions}
+          />
+        ).toBlob();
+        const url = URL.createObjectURL(blob);
+        window.open(url, "_blank");
+      }
     } catch (err) {
       setError('An error occurred. Please try again later.');
     } finally {

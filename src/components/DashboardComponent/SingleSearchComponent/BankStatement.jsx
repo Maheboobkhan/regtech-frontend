@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { pdf } from '@react-pdf/renderer';
+import BankStatementPDF from '../BANK/BankStatementPdf';
 
 const BankStatement = () => {
   const [file, setFile] = useState(null);
@@ -42,6 +44,21 @@ const BankStatement = () => {
       const res = await axios.post('http://regtechapi.in/api/seachv4', formData, { headers });
       console.log(res);
       setResponse(res.data);
+      if (res.data && res.data.statusCode === 200) {
+        // const pdfBlob = new Blob([<PdfDocument data={res.data} />], { type: 'application/pdf' });
+        // const pdfUrl = URL.createObjectURL(pdfBlob);
+        // const pdfWindow = window.open(pdfUrl);
+        // if (pdfWindow) {
+        //   pdfWindow.focus();
+        // }
+        const blob = await pdf(
+          <BankStatementPDF
+          bankStatement={res.data.response}
+          />
+        ).toBlob();
+        const url = URL.createObjectURL(blob);
+        window.open(url, "_blank");
+      }
     } catch (err) {
       setError('An error occurred. Please try again later.');
     } finally {
@@ -119,32 +136,6 @@ const BankStatement = () => {
               Verify
             </button>
           </form>
-          {response && (
-            <div className="mt-4">
-              {response.statusCode === 200 && (
-                <div className="bg-green-400 text-white p-3 rounded">
-                  <h3 className="text-lg font-semibold">Bank Statement Details</h3>
-                  <p><strong>Account Status:</strong> {response.bank_verification.account_status}</p>
-                  {/* Add other fields as needed */}
-                </div>
-              )}
-              {response.statusCode === 102 && (
-                <div className="bg-red-500 text-white p-3 rounded">
-                  Please enter valid details.
-                </div>
-              )}
-              {(response.statusCode === 404 || response.statusCode === '400') && (
-                <div className="bg-red-500 text-white p-3 rounded">
-                  Server Error, Please try later.
-                </div>
-              )}
-              {response.statusCode === 500 && (
-                <div className="bg-red-500 text-white p-3 rounded">
-                  Internal Server Error. Please contact techsupport@docboyz.in for more details.
-                </div>
-              )}
-            </div>
-          )}
         </div>
       </div>
     // </div>

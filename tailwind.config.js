@@ -25,6 +25,9 @@ export default {
   theme: {
     extend: {
       colors: {
+        visited: {
+          DEFAULT: 'yellow',
+        },
         primary: '#e27daa',
         secondary: 'black',
       },

@@ -40,6 +40,7 @@ const BankStatement = () => {
       formData.append('account_type', accountType);
 
       const res = await axios.post('http://13.200.221.11:5000/extract-bank-statement', formData, { headers });
+      console.log(res);
       setResponse(res.data);
     } catch (err) {
       setError('An error occurred. Please try again later.');

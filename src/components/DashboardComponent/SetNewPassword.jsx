@@ -21,7 +21,8 @@ class SetNewPasswordForm extends Component {
     }
 
     getUserById = async() => {
-        const respnse = await axios.get(`http://localhost:8000/api/getuser/${this.props.params.id}`);
+        const domain = localStorage.getItem('domain');
+        const respnse = await axios.get(`${domain}/getuser/${this.props.params.id}`);
         this.setState({user: respnse.data});
     }
 
@@ -37,9 +38,10 @@ class SetNewPasswordForm extends Component {
             this.setState({ error: 'Passwords do not match' });
             return;
         }
+        const domain = localStorage.getItem('domain');
 
         try {
-            const response = await axios.post('http://localhost:8000/api/setnewpassword', {
+            const response = await axios.post(`${domain}/setnewpassword`, {
                 user_id: this.props.params.id,
                 password: newPassword,
                 confirm_password: confirmPassword

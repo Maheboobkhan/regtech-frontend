@@ -1,246 +1,3 @@
-// import axios from "axios";
-// import React, { useEffect, useState } from "react";
-// import Cookies from "js-cookie";
-// const Bhunaksha = () => {
-//   const [selectedState, setSelectedState] = useState("");
-//   const [selectedDistrict, setSelectedDistrict] = useState("");
-//   const [selectedCircle, setSelectedCircle] = useState("");
-//   const [selectedHalka, setSelectedHalka] = useState("");
-//   const [selectedMauza, setSelectedMauza] = useState("");
-//   const [selectedSheet, setSelectedSheet] = useState("");
-//   const [selectedPlot, setSelectedPlot] = useState("");
-
-//   const [jharkhandData, setjharkhandData] = useState([]);
-
-//   useEffect(() => {
-//     fetchJharkhandData();
-//   }, []);
-
-//   const handleSubmit = async (e) => {
-//     const token = Cookies.get("authToken");
-//     e.preventDefault();
-
-//     try {
-//       const response = await axios.post(
-//         "http://regtechapi.in/api/seachv4",
-//         {
-//           bhumi_type: "bhunaksha",
-//           State: selectedState,
-//           District: selectedDistrict,
-//           Circle: selectedCircle,
-//           Halka: selectedHalka,
-//           Mauza: selectedMauza,
-//           Sheetno: selectedSheet,
-//           Plotno: selectedPlot,
-//         },
-//         {
-//           headers: {
-//             AccessToken: token, // Your actual token
-//             "Content-Type": "application/json", // Optional: set the content type
-//           },
-//         }
-//       );
-
-//       console.log('jhar: ',response); // Handle the response
-//     } catch (error) {
-//       console.error("Error during the API call:", error);
-//     }
-//   };
-
-//   const handleStateChange = (e) => {
-//     console.log(e.target.value);
-//     setSelectedState(e.target.value);
-//   };
-
-//   const handleDistrictChange = (e) => {
-//     setSelectedDistrict(e.target.value);
-//   };
-
-//   const handleCircleChange = (e) => {
-//     setSelectedCircle(e.target.value);
-//   };
-
-//   const handleHalkaChange = (e) => {
-//     setSelectedHalka(e.target.value);
-//   };
-
-//   const handleMauzaChange = (e) => {
-//     setSelectedMauza(e.target.value);
-//   };
-
-//   const handleSheetChange = (e) => {
-//     setSelectedSheet(e.target.value);
-//   };
-
-//   const handlePlotChange = (e) => {
-//     setSelectedPlot(e.target.value);
-//   };
-
-//   const fetchJharkhandData = async () => {
-//     const response = await axios.get("http://localhost:8000/api/jharkhandData");
-//     console.log(response);
-
-//     setjharkhandData(response.data);
-//   };
-//   const jharkhandDistricts = [
-//     ...new Set(jharkhandData.map((item) => item.District)),
-//   ];
-
-//   const Circles = [
-//     ...new Set(
-//       jharkhandData
-//         .filter((item) => item.District === selectedDistrict)
-//         .map((item) => item.Circle)
-//     ),
-//   ];
-
-//   const Halkas = [
-//     ...new Set(
-//       jharkhandData
-//         .filter((item) => item.Circle === selectedCircle)
-//         .map((item) => item.Halka)
-//     ),
-//   ];
-
-//   const Mauzas = [
-//     ...new Set(
-//       jharkhandData
-//         .filter((item) => item.Halka === selectedHalka)
-//         .map((item) => item.Mauza)
-//     ),
-//   ];
-
-//   const Sheets = [
-//     ...new Set(
-//       jharkhandData
-//         .filter((item) => item.Mauza === selectedMauza)
-//         .map((item) => item.Sheet)
-//     ),
-//   ];
-
-//   return (
-//     <div>
-//       <form onSubmit={handleSubmit}>
-//         <label
-//           htmlFor="state"
-//           className="block text-lg font-medium text-gray-700"
-//         >
-//           Select State
-//         </label>
-//         <select
-//           id="state"
-//           name="state"
-//           className="form-select cursor-pointer mt-1 block w-1/2 border border-[#00acc1] rounded-lg shadow-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-[#00acc1] focus:border-[#0097a7] transition duration-200"
-//           value={selectedState}
-//           onChange={handleStateChange}
-//         >
-//           <option value="" className="text-gray-500">
-//             --Select State--
-//           </option>
-//           <option value="bihar">Bihar</option>
-//           <option value="jharkhand">Jharkhand</option>
-//           <option value="goa">Goa</option>
-//         </select>
-
-//         {/* jharkhand */}
-//         {selectedState === "jharkhand" && (
-//           <>
-//             <select
-//               onChange={handleDistrictChange}
-//               className="form-select cursor-pointer mt-1 block w-1/2 border border-[#00acc1] rounded-lg shadow-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-[#00acc1] focus:border-[#0097a7] transition duration-200"
-//             >
-//               <option>Select District</option>
-//               {jharkhandDistricts.map((district) => {
-//                 return (
-//                   <option key={district} value={district}>
-//                     {district}
-//                   </option>
-//                 );
-//               })}
-//             </select>
-
-//             <select
-//               onChange={handleCircleChange}
-//               className="form-select cursor-pointer mt-1 block w-1/2 border border-[#00acc1] rounded-lg shadow-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-[#00acc1] focus:border-[#0097a7] transition duration-200"
-//             >
-//               <option>Select Circle</option>
-//               {Circles.map((circle) => {
-//                 return (
-//                   <option key={circle} value={circle}>
-//                     {circle}
-//                   </option>
-//                 );
-//               })}
-//             </select>
-
-//             <select
-//               onChange={handleHalkaChange}
-//               className="form-select cursor-pointer mt-1 block w-1/2 border border-[#00acc1] rounded-lg shadow-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-[#00acc1] focus:border-[#0097a7] transition duration-200"
-//             >
-//               <option>Select Halka</option>
-//               {Halkas.map((halka) => {
-//                 return (
-//                   <option key={halka} value={halka}>
-//                     {halka}
-//                   </option>
-//                 );
-//               })}
-//             </select>
-
-//             <select
-//               onChange={handleMauzaChange}
-//               className="form-select cursor-pointer mt-1 block w-1/2 border border-[#00acc1] rounded-lg shadow-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-[#00acc1] focus:border-[#0097a7] transition duration-200"
-//             >
-//               <option>Select Mauza</option>
-//               {Mauzas.map((mauza) => {
-//                 return (
-//                   <option key={mauza} value={mauza}>
-//                     {mauza}
-//                   </option>
-//                 );
-//               })}
-//             </select>
-
-//             <select
-//               onChange={handleSheetChange}
-//               className="form-select cursor-pointer mt-1 block w-1/2 border border-[#00acc1] rounded-lg shadow-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-[#00acc1] focus:border-[#0097a7] transition duration-200"
-//             >
-//               <option>Select Sheet Number</option>
-//               {Sheets.map((sheet) => {
-//                 return (
-//                   <option key={sheet} value={sheet}>
-//                     {sheet}
-//                   </option>
-//                 );
-//               })}
-//             </select>
-//             <label
-//               htmlFor="plot"
-//               className="block mt-2 text-lg font-medium text-gray-700"
-//             >
-//               Enter Plot Number
-//             </label>
-//             <input
-//               id="plot"
-//               name="plot"
-//               className="block w-1/2 border border-[#00acc1] rounded-lg shadow-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-[#00acc1] focus:border-[#0097a7] transition duration-200"
-//               type="text"
-//               onChange={handlePlotChange}
-//               placeholder="Enter Plot Number"
-//             />
-//             <input
-//               className="mt-4 text-white block cursor-pointer bg-[#00acc1] w-1/2 border border-[#00acc1] hover:bg-gray-200 hover:text-black rounded-lg shadow-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-[#00acc1] focus:border-[#0097a7] transition duration-200"
-//               type="submit"
-//             />
-//           </>
-//         )}
-//       </form>
-//     </div>
-//   );
-// };
-
-// export default Bhunaksha;
-
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
@@ -273,14 +30,15 @@ const Bhunaksha = () => {
   const [responseData, setResponseData] = useState(null); // State to store response data
 
   useEffect(() => {
-    fetchJharkhandData();
-    fetchBiharData();
-    fetchChhattisgarhData();
-    fetchRajasthanData();
-    fetchLakshadweepData();
-    fetchKeralaData();
-    fetchGoaData();
-    fetchOdishaData();
+    const domain = localStorage.getItem('domain');
+    fetchJharkhandData(domain);
+    // fetchBiharData(domain);
+    fetchChhattisgarhData(domain);
+    fetchRajasthanData(domain);
+    fetchLakshadweepData(domain);
+    fetchKeralaData(domain);
+    fetchGoaData(domain);
+    fetchOdishaData(domain);
   }, []);
 
   const handleSubmit = async (e) => {
@@ -399,49 +157,49 @@ const Bhunaksha = () => {
   };
 
   // biharData
-  const fetchBiharData = async () => {
-    const response = await axios.get("http://localhost:8000/api/biharData");
+  const fetchBiharData = async (domain) => {
+    const response = await axios.get(`${domain}/biharData`);
     setBiharData(response.data);
   };
 
-  const fetchLakshadweepData = async () => {
+  const fetchLakshadweepData = async (domain) => {
     const response = await axios.get(
-      "http://localhost:8000/api/lakshadweepData"
+      `${domain}/lakshadweepData`
     );
     setLakshadweepData(response.data);
   };
 
   // jharkhandData
-  const fetchJharkhandData = async () => {
-    const response = await axios.get("http://localhost:8000/api/jharkhandData");
+  const fetchJharkhandData = async (domain) => {
+    const response = await axios.get(`${domain}/jharkhandData`);
     setjharkhandData(response.data);
   };
 
   // chhattisgarh
-  const fetchChhattisgarhData = async () => {
+  const fetchChhattisgarhData = async (domain) => {
     const response = await axios.get(
-      "http://localhost:8000/api/chhattisgarhData"
+      `${domain}/chhattisgarhData`
     );
     setChhattisgarhData(response.data);
   };
 
-  const fetchRajasthanData = async () => {
-    const response = await axios.get("http://localhost:8000/api/rajasthanData");
+  const fetchRajasthanData = async (domain) => {
+    const response = await axios.get(`${domain}/rajasthanData`);
     setRajasthanData(response.data);
   };
 
-  const fetchKeralaData = async () => {
-    const response = await axios.get("http://localhost:8000/api/keralaData");
+  const fetchKeralaData = async (domain) => {
+    const response = await axios.get(`${domain}/keralaData`);
     setKeralaData(response.data);
   };
 
-  const fetchGoaData = async () => {
-    const response = await axios.get("http://localhost:8000/api/goaData");
+  const fetchGoaData = async (domain) => {
+    const response = await axios.get(`${domain}/goaData`);
     setGoaData(response.data);
   };
 
-  const fetchOdishaData = async () => {
-    const response = await axios.get("http://localhost:8000/api/odishaData");
+  const fetchOdishaData = async (domain) => {
+    const response = await axios.get(`${domain}/odishaData`);
     setOdishaData(response.data);
   };
 

@@ -45,7 +45,7 @@ const LicenseValidation = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-green-50 via-blue-50 to-purple-50">
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-green-50 via-blue-50 to-purple-50 mt-6">
       <div className="w-full max-w-lg bg-white shadow-lg rounded-lg overflow-hidden">
         <div className="bg-[#00acc1] p-4 flex justify-between">
           <h3 className="text-xl font-semibold text-white">License Verification</h3>
@@ -108,7 +108,7 @@ const LicenseValidation = () => {
             </div>
             <button
               type="submit"
-              className="bg-green-500 hover:bg-green-400 text-white font-bold py-2 px-4 rounded"
+              className="bg-blue-500 hover:bg-green-400 text-white font-bold py-2 px-4 rounded"
             >
               Verify
             </button>
@@ -116,7 +116,7 @@ const LicenseValidation = () => {
           {response && (
             <>
               {response.statusCode === '200' && (
-                <div className="bg-green-400 text-white p-3 rounded mt-4">
+                <div className="bg-green-100 text-green-800 p-3 rounded mt-4">
                   <h3 className="text-lg font-semibold">License Details</h3>
                   <p><strong>License Number:</strong> {response.license_validation.response.dlNumber}</p>
                   <p><strong>Name:</strong> {response.license_validation.response.name}</p>
