@@ -69,14 +69,14 @@ class ApiMaster extends Component {
       data[`txtUnicornPrice${api.id}`] = api.unicorn_price;
     });
 
-    console.log(data);
+    
     const domain = localStorage.getItem('domain');
     try {
       const response = await axios.post(
         `${domain}/updateapimaster`,
         data
       );
-      console.log(response);
+      
       toast.success('Data saved successfully!');
     } catch (error) {
       console.error("There was an error saving the data!", error);

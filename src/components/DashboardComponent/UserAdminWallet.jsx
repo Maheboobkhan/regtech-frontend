@@ -257,7 +257,7 @@ class UserAdminWallet extends Component {
   }
 
   componentDidMount(){
-    this.getUsersAscending()
+    // this.getUsersAscending()
   }
 
   toggleWalletModal = () => {
@@ -295,7 +295,7 @@ class UserAdminWallet extends Component {
       "http://localhost:8000/api/billingadminwallet",
       formdata
     );
-    console.log(response);
+    
     this.setState({ openWalletModal: false });
     if (response.data.success) {
       toast.success(response.data.success);
@@ -313,12 +313,12 @@ class UserAdminWallet extends Component {
     }&total_amounts=${(
       parseFloat(amount) + parseFloat((amount * 0.18).toFixed(2))
     ).toFixed(2)}`;
-    console.log(formdata);
+    
     const response = await axios.post(
       "http://localhost:8000/api/billinguserwallet",
       formdata
     );
-    console.log(response);
+    
     if (response.data.success) {
       toast.success(response.data.success);
     } else {
@@ -332,8 +332,7 @@ class UserAdminWallet extends Component {
         `http://localhost:8000/api/getallusersascending`
       );
       const usersAscending = response.data;
-      console.log(usersAscending);
-      console.log("uu: ", usersAscending);
+    
       this.setState({ usersAscending: usersAscending });
     } catch (error) {
       this.setState({ error: "Error fetching user data" });

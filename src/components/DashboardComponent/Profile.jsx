@@ -43,7 +43,7 @@ class ProfileForm extends Component {
     };
 
     this.setState({ NameEmailObject: updatedNameEmailObject });
-    console.log(NameEmailObject[id]);
+
   };
 
   handleInputEmailChange = (id, value) => {
@@ -57,7 +57,7 @@ class ProfileForm extends Component {
     };
 
     this.setState({ NameEmailObject: updatedNameEmailObject });
-    console.log(NameEmailObject[id]);
+    
   };
 
   handleEmailChange = (event) => {
@@ -94,7 +94,7 @@ class ProfileForm extends Component {
         return acc;
       }, {});
 
-      console.log(NameEmailObject);
+    
 
       this.setState({
         bankProfiles: response.data,
@@ -108,7 +108,7 @@ class ProfileForm extends Component {
 
   handleFileChange = (event, type, index = null) => {
     const file = event.target.files[0];
-    console.log(file);
+    
 
     this.setState(
       (prevState) => {

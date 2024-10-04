@@ -214,8 +214,6 @@ class Role0_Dashboard extends Component {
       bankverificationMenus: [],
       otherMenus: [],
       user: {},
-      amount: "",
-      balance: 2708.38,
       selectedUser: "",
       paymentMethod: "Select Credit/Debit",
       users: ["User1", "User2", "User3", "User4", "User5"],
@@ -273,7 +271,7 @@ class Role0_Dashboard extends Component {
     const token = Cookies.get("authToken");
     const formdata = `token=${token}&user=${this.state.selectedUser}&transaction_type=${this.state.paymentMethod}&amount=${this.state.amount}`;
     const response = await axios.post(`${domain}/billingadminwallet`, formdata);
-    console.log(response);
+    
     this.setState({ openWalletModal: false });
     if (response.data.success) {
       toast.success(response.data.success);
@@ -294,7 +292,7 @@ class Role0_Dashboard extends Component {
     ).toFixed(2)}`;
     const domain = localStorage.getItem("domain");
     const response = await axios.post(`${domain}/billinguserwallet`, formdata);
-    console.log(response);
+    
     if (response.data.success) {
       toast.success(response.data.success);
     } else {
@@ -309,12 +307,12 @@ class Role0_Dashboard extends Component {
       return;
     }
     const domain = localStorage.getItem("domain");
-    console.log("domainss: ", domain);
+    
 
     try {
       const response = await axios.get(`${domain}/getuser/${token}`);
       const user = response.data;
-      console.log("uu: ", user);
+     
       this.setState({ user });
     } catch (error) {
       this.setState({ error: "Error fetching user data" });
@@ -326,7 +324,7 @@ class Role0_Dashboard extends Component {
     try {
       const response = await axios.get(`${domain}/getallusersascending`);
       const usersAscending = response.data;
-      console.log("usersAscending: ", usersAscending);
+      
       this.setState({ usersAscending: usersAscending });
     } catch (error) {
       this.setState({ error: "Error fetching user data" });
@@ -416,23 +414,22 @@ class Role0_Dashboard extends Component {
     this.setState({ openWalletModal: false });
   };
 
-  handleInputChange = (e) => {
-    this.setState({ amount: e.target.value });
-  };
+  // handleInputChange = (e) => {
+  //   this.setState({ amount: e.target.value });
+  // };
 
   handleUserChange = (e) => {
-    console.log(e.target.value);
+    
     this.setState({ selectedUser: e.target.value });
   };
 
   handlePaymentMethodChange = (e) => {
-    console.log(e.target.value);
     this.setState({ paymentMethod: e.target.value });
   };
 
-  handleOptionClick = (value) => {
-    this.setState({ amount: value });
-  };
+  // handleOptionClick = (value) => {
+  //   this.setState({ amount: value });
+  // };
 
   toggleView = () => {
     this.setState((prevState) => ({ isAdmin: !prevState.isAdmin }));
@@ -685,6 +682,7 @@ class Role0_Dashboard extends Component {
                       <li
                         className="w-full mx-auto text-left mt-2 py-3 px-4 transition-all hover:bg-gray-600 hover:text-white cursor-pointer"
                         key={menu.id}
+                        // key={index}
                       >
                         {menu.api_name}
                       </li>

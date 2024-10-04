@@ -24,7 +24,7 @@ class AdminUserWallet extends Component {
   }
 
   componentDidMount(){
-    this.getUsersAscending();
+    // this.getUsersAscending();
   }
 
   getUsersAscending = async () => {
@@ -33,8 +33,7 @@ class AdminUserWallet extends Component {
         `http://localhost:8000/api/getallusersascending`
       );
       const usersAscending = response.data;
-      console.log(usersAscending);
-      console.log("uu: ", usersAscending);
+      
       this.setState({ usersAscending: usersAscending });
     } catch (error) {
       this.setState({ error: "Error fetching user data" });

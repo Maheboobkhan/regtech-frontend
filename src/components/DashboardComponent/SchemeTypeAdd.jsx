@@ -33,7 +33,7 @@ class SchemeTypeAdd extends Component {
         scheme_name: name,
         hit_limits: hitLimit
       });
-      console.log(response);
+      
 
       this.setState({ name: '', hitLimit: '', submitting: false });
 

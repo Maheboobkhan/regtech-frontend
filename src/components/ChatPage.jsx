@@ -82,7 +82,6 @@ class ChatComponent extends Component {
     };
 
     handleServiceSelection = (service) => {
-        console.log(!this.state.isFormOpen);
         this.setState({ selectedService: service });
         // Save service in localStorage
         localStorage.setItem('selectedService', service);
@@ -90,7 +89,6 @@ class ChatComponent extends Component {
         // Send selected service to backend
         axios.post(`${domain}/store-service`, { service })
             .then(response => {
-                console.log('res: ', response.data.id);
                 localStorage.setItem('userId', response.data.id);
                 this.setState({ message: 'Please submit details below to connect with us' });
             })
@@ -105,10 +103,8 @@ class ChatComponent extends Component {
         try {
             const response = await axios.post(`${domain}/users/${id}/clientmessage`, { message: this.state.clientMessage });
             this.setState({ clientMessage: '' })
-            console.log('client: ',response)
 
             const messageResponse = await axios.get(`${domain}/users/${id}/clientmessage`)
-            console.log('messageRes: ', messageResponse.data);
             this.setState({ messages: messageResponse.data.messages });
         } catch (error) {
             console.error("There was an error posting the message!", error);
@@ -122,7 +118,7 @@ class ChatComponent extends Component {
     
     handleSubmit = () => {
         const id = localStorage.getItem('userId');
-        console.log('user: ', id);
+    
         const { name, mobileNumber, email } = this.state;
         const domain = localStorage.getItem('domain');
 

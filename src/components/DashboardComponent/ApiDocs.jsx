@@ -102,7 +102,7 @@ class ApiDocumentation extends Component {
         const response = await axios.get(
             `${domain}/getuser/${token}`
         );
-        console.log(response);
+
         this.setState({ accessToken: response.data.access_token });
     } catch (error) {
         this.setState({ error: "Error fetching user data" });

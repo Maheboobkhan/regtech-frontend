@@ -8,17 +8,15 @@ import 'aos/dist/aos.css';
 class CustomerAcquisition extends Component {
   componentDidMount() {
     AOS.init({ duration: 1000, once: true });
+
+    // Add event listener for window resize
+    window.addEventListener('resize', this.handleResize);
 }
   constructor(props) {
     super(props);
     this.state = {
       width: window.innerWidth, // Initialize width
     };
-  }
-
-  componentDidMount() {
-    // Add event listener for window resize
-    window.addEventListener('resize', this.handleResize);
   }
 
   componentWillUnmount() {

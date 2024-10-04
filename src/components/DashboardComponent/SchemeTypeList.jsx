@@ -38,7 +38,7 @@ class SchemeTypeMaster extends Component {
     const domain = localStorage.getItem('domain');
     const { deleteId } = this.state;
       const response = await axios.post(`${domain}/deleteschemetypemaster/${deleteId}`);
-      console.log('res:',response);
+      
       this.setState({ showModal: false, deleteId: null });
       if(response.data[0] === 'success'){
         toast.success('Scheme Type Deleted Successfully');

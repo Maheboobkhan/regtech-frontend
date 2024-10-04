@@ -449,7 +449,7 @@ class MobileDashboard extends Component {
     render() {
         const { location } = this.props;
         const currentUrl = location.pathname;
-        console.log('path: ', currentUrl);
+        
 
         const { sidebarOpen, eSignDropdownOpen, OtherDropdownOpen, PassportDropdownOpen, IVRCallingDropdownOpen, VideoDropdownOpen, amount, CourierDropdownOpen, activeMenu, balance, openWalletModal, kycDropdownOpen, CorporateDropdownOpen, BankVerificationDropdownOpen } = this.state;
         const tax = (amount * 0.18).toFixed(2);

@@ -74,12 +74,12 @@ class UserForm extends Component {
 
   fetchApiGroups = async (token) => {
     const domain = localStorage.getItem("domain");
-    console.log(token);
+    
 
     try {
       const response = await fetch(`${domain}/apigroup/${token}`);
       const data = await response.json();
-      console.log("apigroups: ", data);
+      
       this.setState({ apiGroups: data.api_group || [] }, () => {
         // this.state.apiGroups.forEach(group => {
         //     this.fetchApiOptions(group.id);
@@ -95,7 +95,7 @@ class UserForm extends Component {
     try {
       const response = await fetch(`${domain}/apimaster/${token}`);
       const data = await response.json();
-      console.log("options: ", data);
+      
       this.setState({ apiOptions: data });
       const { apimaster_submenu } = data;
       // this.setState(prevState => ({
@@ -109,17 +109,16 @@ class UserForm extends Component {
     }
   };
 
-  handlePlanTypeChange = (optionId, event) => {
-    const planType = event.target.value;
-    this.setState((prevState) => ({
-      selectedPlanTypes: {
-        ...prevState.selectedPlanTypes,
-        [optionId]: planType,
-      },
-    }));
+  // handlePlanTypeChange = (optionId, event) => {
+  //   const planType = event.target.value;
+  //   this.setState((prevState) => ({
+  //     selectedPlanTypes: {
+  //       ...prevState.selectedPlanTypes,
+  //       [optionId]: planType,
+  //     },
+  //   }));
 
-    console.log(this.state.selectedPlanTypes)
-  };
+  // };
 
   // handleCustomInputChange = (optionId, index, value) => {
   //   this.setState((prevState) => ({
@@ -133,7 +132,6 @@ class UserForm extends Component {
   // };
 
   handleCustomInputChange = (groupId, optionId, index, field, value) => {
-    console.log(groupId, optionId, index, field, value);
     this.setState((prevState) => ({
       customPlanInputs: {
         ...prevState.customPlanInputs,
@@ -158,7 +156,6 @@ class UserForm extends Component {
       
     }));
 
-    console.log('customPlanInputs: ',this.state.customPlanInputs);
   };
 
   handleRemoveCustomInput = (optionId, index) => {
@@ -195,7 +192,7 @@ class UserForm extends Component {
 
     const dataToPost = `ids=${idDataArray.join("/")}`;
 
-    console.log(dataToPost); // Check the data structure in the console
+    
     // Send the dataToPost to your API here
   };
 
@@ -206,7 +203,6 @@ class UserForm extends Component {
         [optionId]: [...(prevState.customPlanInputs[optionId] || []), ""],
       },
     }));
-    console.log(customPlanInputs);
   };
 
   handleSchemaTypeChange = (e) => {
@@ -214,7 +210,7 @@ class UserForm extends Component {
   };
 
   handleSchemeChange = (e) => {
-    console.log(e.target.value);
+    
     this.setState({ scheme: e.target.value });
   };
 
@@ -241,12 +237,12 @@ class UserForm extends Component {
       const formattedEndDate = endDate.toISOString().split("T")[0];
       const formattedStartDate = today.toISOString().split("T")[0];
       planDur = `${formattedStartDate} to ${formattedEndDate}`;
-      console.log(planDur);
+    
       const [startDateStr, endDateStr] = planDur.split(" to ");
 
       // Convert the strings to Date objects
       const startDatePlan = new Date(startDateStr);
-      console.log(startDatePlan);
+      
       const endDatePlan = new Date(endDateStr);
 
       // Calculate the difference in months
@@ -295,7 +291,7 @@ class UserForm extends Component {
 
   // Handle individual option change
   handleApiOptionChange = (optionId, groupId, isChecked) => {
-    console.log("api: ", optionId, groupId, isChecked);
+    
     this.setState((prevState) => ({
       checkedOptions: {
         ...prevState.checkedOptions,
@@ -321,7 +317,7 @@ class UserForm extends Component {
       // Construct a unique key using optionId and groupId
       const key = `${optionId}_${groupId}`;
       newInputData[key] = { optionId, groupId, value: newValue };
-      console.log(newInputData);
+      
 
       return {
         inputValues: {
@@ -334,7 +330,6 @@ class UserForm extends Component {
   };
 
   handlePlanTypeChange = (optionId, event) => {
-    console.log(event.target.value);
     const planType = event.target.value;
     this.setState((prevState) => ({
       selectedPlanTypes: {
@@ -342,7 +337,7 @@ class UserForm extends Component {
         [optionId]: planType,
       },
     }));
-    console.log(this.state.selectedPlanTypes)
+
   };
 
   addInput = () => {
@@ -351,18 +346,18 @@ class UserForm extends Component {
     }));
   };
 
-  addCustomInput = () => {
-    this.setState((prevState) => ({
-      customPlanInputs: [...prevState.customPlanInputs, ""],
-    }));
-  };
+  // addCustomInput = () => {
+  //   this.setState((prevState) => ({
+  //     customPlanInputs: [...prevState.customPlanInputs, ""],
+  //   }));
+  // };
 
   // form data
   handleSubmit = async (e) => {
     e.preventDefault();
 
     const { inputData } = this.state; // Access inputData from state
-    console.log("inputData:", inputData);
+    
     const {
       schemaType,
       scheme,
@@ -387,7 +382,7 @@ class UserForm extends Component {
 
     // for custom
     const { customPlanInputs } = this.state;
-    console.log(customPlanInputs);
+    
 
     let idDataArray = [];
 
@@ -425,7 +420,7 @@ class UserForm extends Component {
 
     // Combine both results
     const ids = `${idDataArray.join("")}${normalIds}`;
-    console.log("ids: ", ids);
+    
 
     const formData = {
       ids,
@@ -452,7 +447,7 @@ class UserForm extends Component {
       const response = await axios.post(`${domain}/usercreate`, formData, {
         headers,
       });
-      console.log(response);
+      
       if (response.status === 200) {
         toast.success("User Added Successfully!");
         setTimeout(() => {

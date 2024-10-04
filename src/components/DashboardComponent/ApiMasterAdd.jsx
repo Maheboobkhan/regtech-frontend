@@ -127,14 +127,14 @@ class AddApiMaster extends Component {
       route_name: routeName,
       api_slug: apiSlug,
     };
-    console.log(data);
+    
     const domain = localStorage.getItem('domain');
     try {
       const response = await axios.post(
         `${domain}/createapimaster`,
         data
       );
-      console.log(response);
+
       if (response.data[0] === "success") {
         toast.success(response.data[1]);
         this.setState({

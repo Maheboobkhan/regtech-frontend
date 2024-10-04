@@ -187,9 +187,6 @@ class RolePostpaid_Dashboard extends Component {
       corporateMenus: [],
       bankVerificationMenus: [],
       groupIdArray: [],
-      kycDropdownOpen: false,
-      CorporateDropdownOpen: false,
-      BankVerificationDropdownOpen: false,
       userMenuPermission: [],
       user: {},
     };

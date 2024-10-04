@@ -13,7 +13,7 @@ class SchemeTypeEdit extends Component {
   };
 
   componentDidMount() {
-    console.log(this.props.params.id)
+    
     this.fetchScheme();
   }
 
@@ -21,7 +21,7 @@ class SchemeTypeEdit extends Component {
     const domain = localStorage.getItem('domain');
       const { id } = this.state;
       const response = await axios.get(`${domain}/getschemetypemasterbyid/${this.props.params.id}`);
-      console.log(response);
+    
       const { name, hit_limits } = response.data;
       this.setState({ name, hitLimit: hit_limits });
   };
@@ -48,7 +48,7 @@ class SchemeTypeEdit extends Component {
         scheme_name: name,
         hit_limits: hitLimit
       });
-      console.log(response);
+     
 
       this.setState({ submitting: false });
 

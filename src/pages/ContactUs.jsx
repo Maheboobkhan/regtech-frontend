@@ -70,7 +70,7 @@ class ContactUs extends Component {
                 message,
             });
 
-            console.log('Store Response: ', storeResponse);
+            
 
             // Step 2: Send email using the provided API
             const emailResponse = await axios.post('https://collectkart.docboyz.in/api/enquiery_email', {
@@ -81,7 +81,7 @@ class ContactUs extends Component {
                 message,
             });
 
-            console.log('Email Response: ', emailResponse);
+            
 
             // Update state with success message if both requests are successful
             this.setState({

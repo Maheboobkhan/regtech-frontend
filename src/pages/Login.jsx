@@ -33,11 +33,11 @@ class LoginPage extends Component {
     handleSubmit = async (event) => {
         event.preventDefault();
         const domain = localStorage.getItem('domain');
-        console.log('domainsss: ',domain)
+        
         const { email, password } = this.state;
         try {
             const response = await axios.post(`${domain}/login`, { email, password });
-            console.log(response);
+           
             // Display success toast
             
             // Redirect to dashboard

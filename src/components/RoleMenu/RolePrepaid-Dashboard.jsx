@@ -189,9 +189,6 @@ class RolePrepaid_Dashboard extends Component {
       corporateMenus: [],
       bankVerificationMenus: [],
       groupIdArray: [],
-      kycDropdownOpen: false,
-      CorporateDropdownOpen: false,
-      BankVerificationDropdownOpen: false,
       userMenuPermission: [],
       user: {},
     };
@@ -215,10 +212,10 @@ class RolePrepaid_Dashboard extends Component {
     try {
       const response = await axios.get(`${domain}/apimaster/${token}`);
       const data = response.data;
-      console.log("apimasterprepaid: ", data);
+      
       if (this.state.groupIdArray.includes(1)) {
         const kycverifymenus = data.filter((menu) => menu.api_group_id === 1);
-        console.log(kycverifymenus);
+        
         this.setState({ kycVerifyMenus: kycverifymenus });
       }
       if (this.state.groupIdArray.includes(6)) {
@@ -267,7 +264,6 @@ class RolePrepaid_Dashboard extends Component {
       );
 
       const userMenuPermission = response.data;
-      console.log("userMenuPermission: ", userMenuPermission);
       this.setState({ userMenuPermission });
     } catch (error) {
       this.setState({ error: "Error fetching user data" });
@@ -394,7 +390,7 @@ class RolePrepaid_Dashboard extends Component {
     try {
       // Send POST request using Axios
       const response = await axios.post(`${domain}/billingaddamount`, formData);
-      console.log(response);
+      
 
       // Assuming response.data structure
       const responseData = response.data;
@@ -404,14 +400,14 @@ class RolePrepaid_Dashboard extends Component {
           "7PQJ3ZJPRQ",
           "prod"
         );
-        console.log(responseData.data.data);
+       
 
         const options = {
           access_key: responseData.data.data,
           onResponse: (response_data) => {
-            console.log("response_data: ", response_data);
+        
             if (response_data.status === true) {
-              console.log("suc");
+        
 
               const amount = this.state.amount;
               const txnid = response_data.txnid ? response_data.txnid : null;
@@ -419,7 +415,7 @@ class RolePrepaid_Dashboard extends Component {
               const successUrl = `${window.location.origin}/success_url/${amount}/${txnid}/${email}`;
               window.location.href = successUrl;
             } else {
-              console.log("erro");
+        
               const name_on_card = response_data.name_on_card
                 ? response_data.name_on_card
                 : null;
@@ -433,7 +429,7 @@ class RolePrepaid_Dashboard extends Component {
           theme: "#123456", // color hex
         };
 
-        console.log(options);
+        
 
         easebuzzCheckout.initiatePayment(options);
       } else {
@@ -441,7 +437,7 @@ class RolePrepaid_Dashboard extends Component {
         console.error("Unexpected response status");
       }
     } catch (error) {
-      console.log("errrr");
+      
       if (error.response && error.response.status === 422) {
         const errors = error.response.data.errors;
         if (errors.amount) {

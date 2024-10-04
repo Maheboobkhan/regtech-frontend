@@ -76,7 +76,7 @@ class PrepaidDashboard extends Component {
       const domain = localStorage.getItem("domain");
       const response = await axios.get(`${domain}/getscheme/${token}`);
       const scheme = response.data;
-      console.log("scheme: ", scheme);
+      
       const aadharSchemes = scheme.filter(
         (schemeName) =>
           schemeName.api_slug === "aadhaar" ||

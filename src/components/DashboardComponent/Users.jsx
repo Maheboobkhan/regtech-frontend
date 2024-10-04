@@ -97,7 +97,7 @@ class UserList extends Component {
         try {
             const response = await axios.post(`${domain}/userdelete/${userToDelete}`, {
             });
-            console.log(response);
+            
             this.setState(prevState => ({
                 users: prevState.users.filter(user => user.id !== userToDelete),
                 showModal: false,
